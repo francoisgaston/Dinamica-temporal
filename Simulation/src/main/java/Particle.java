@@ -11,8 +11,12 @@ public class Particle {
         this.speed = speed;
     }
 
-    public void setPosition(double position){
+    public void setPosition(double position) {
+        this.position = position;
+    }
 
+    public void setPreviousPosition(double previousPosition) {
+        this.previousPosition = previousPosition;
     }
 
     public double getPosition() {
