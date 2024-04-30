@@ -7,8 +7,6 @@ import math
 # DATOS A CAMBIAR SEGÚN EL CASO DE ESTUDIO
 # ---------------------------------------------------
 OUTPUT_PATH = '../Simulation/Output/'
-DEFAULT_INPUT_PATH = '../Simulation/Input/'
-AVG_PATH = '../output/'
 DELTA_T = 0.001
 # ---------------------------------------------------
 
@@ -25,7 +23,7 @@ def main():
         particle_coords = pd.read_csv(OUTPUT_PATH + 'VerletOutput_' + '0E' + str(math.log10(DELTA_T))[:2] + '.csv')
 
     plt.figure(figsize=(10, 6))
-    plt.plot(particle_coords['timeFrame'], particle_coords['position'], label=f'Borde')
+    plt.plot(particle_coords['timeFrame'], particle_coords['position'], label=f'Verlet')
 
     plt.xlabel('Tiempo (s)', fontsize=16)
     plt.ylabel('Posición (m)', fontsize=16)
