@@ -56,11 +56,11 @@ public class SimulationFactory {
             for(double currentTimeFrame = 0; currentTimeFrame <  simulationConfig.getTotalTime(); currentTimeFrame += deltaT) {
                 // Calculate following pos
                 double nextPosition = 2 * particle.getPosition() - particle.getPreviousPosition() +
-                        (-Utils.K * particle.getPosition() - Utils.GAMMA * particle.getSpeed()) * (deltaT * deltaT) / (2 * particle.getMass());
+                        (-Utils.K * particle.getPosition() - Utils.GAMMA * particle.getSpeed()) * (deltaT * deltaT) / (particle.getMass());
 
                 // Calculate the second following pos
                 double secondNextPosition = 2 * nextPosition - particle.getPosition() +
-                        (-Utils.K * nextPosition - Utils.GAMMA * particle.getSpeed()) * (deltaT * deltaT) / (2 * particle.getMass());
+                        (-Utils.K * nextPosition - Utils.GAMMA * particle.getSpeed()) * (deltaT * deltaT) / (particle.getMass());
 
                 // Calculate following speed
                 double nextSpeed = (secondNextPosition - particle.getPosition()) / (2 * deltaT);

@@ -4,5 +4,5 @@ public class Utils {
     public static double GAMMA = 100;
     public static double INITIAL_POSITION = 1;
     public static double AMPLITUDE = 1; // Check
-    public static double INITIAL_SPEED = - AMPLITUDE * GAMMA / 2;
+    public static double INITIAL_SPEED = - AMPLITUDE * GAMMA / (2 * MASS);
 }
