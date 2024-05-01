@@ -4,8 +4,7 @@ import java.util.function.BiFunction;
 
 public class Methods {
 
-    public static double[] GearMethod(double pos, double vel, double deltaTime, BiFunction<Double, Double, Double> acelerationFuction){
-        double[] alpha = Utils.ALPHA_VELOCITY;
+    public static double[] GearMethod(double pos, double vel, double deltaTime, BiFunction<Double, Double, Double> acelerationFuction, double[] alpha){
         double dr2 = acelerationFuction.apply(pos, vel);
         double dr3 = acelerationFuction.apply(vel, dr2);
         double dr4 = acelerationFuction.apply(dr2, dr3);

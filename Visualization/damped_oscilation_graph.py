@@ -8,7 +8,7 @@ import math
 # ---------------------------------------------------
 OUTPUT_PATH = '../Simulation/Output/'
 DELTA_T = 0.001
-METHODS = ["Verlet", "Beeman", "Gear", "Perfect"]
+METHODS = ["Verlet", "Beeman", "Gear", "Analitica"]
 # ---------------------------------------------------
 
 

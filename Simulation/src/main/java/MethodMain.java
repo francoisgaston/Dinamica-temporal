@@ -18,7 +18,7 @@ public class MethodMain {
         BiFunction<Double, Double, Double> acelerationFuction = (pos, vel) -> (-Utils.K * pos - Utils.GAMMA * vel) / Utils.MASS;
         double[] r = {Utils.INITIAL_POSITION, Utils.INITIAL_SPEED};
 
-        String[] methods = new String[]{"Beeman", "Gear", "Perfect"};
+        String[] methods = new String[]{"Beeman", "Gear", "Analitica"};
         for(String method : methods){
 
             System.out.println("Starting simulation with " + method);
@@ -49,7 +49,7 @@ public class MethodMain {
         switch (method) {
             case "Gear" -> {
                 for (double actualTime = 0; actualTime < totalTime; actualTime += deltaTime) {
-                    r = Methods.GearMethod(r[0], r[1], deltaTime, acelerationFuction);
+                    r = Methods.GearMethod(r[0], r[1], deltaTime, acelerationFuction, Utils.ALPHA_VELOCITY);
                     bw.write(actualTime + "," + r[0] + "," + r[1] + "\n");
                 }
             }
@@ -61,7 +61,7 @@ public class MethodMain {
                     bw.write(actualTime + "," + r[0] + "," + r[1] + "\n");
                 }
             }
-            case "Perfect" -> {
+            case "Analitica" -> {
                 for (double actualTime = 0; actualTime < totalTime; actualTime += deltaTime) {
                     r = Methods.PerfectMethod(actualTime);
                     bw.write(actualTime + "," + r[0] + "," + r[1] + "\n");
