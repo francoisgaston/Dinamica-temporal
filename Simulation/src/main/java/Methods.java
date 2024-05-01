@@ -45,4 +45,12 @@ public class Methods {
 
         return new double[]{newPos, 0};
     }
+
+    public static double[] VerletMethod(double pos, double vel, double previousPos, double deltaTime, BiFunction<Double, Double, Double> acelerationFuction){
+        double nextPosition = 2 * pos - previousPos + acelerationFuction.apply(pos, vel) * Math.pow(deltaTime, 2);
+        double secondNextPosition = 2 * nextPosition - pos + acelerationFuction.apply(nextPosition, vel) * Math.pow(deltaTime, 2);
+        double nextSpeed = (secondNextPosition - pos) / (2 * deltaTime);
+
+        return new double[]{nextPosition, nextSpeed};
+    }
 }
