@@ -5,38 +5,77 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.function.BiFunction;
 
 public class SimulationFactory {
-
     public static void main(String[] args) {
-        //Leer de un JSON parametros
-        String FILE_PATH = "Simulation/Input/input.json";
-        SimulationConfig simulationConfig = readConfig(FILE_PATH);
-        String SIM_INPUT_FILE = "Simulation/Output/VerletInput_" + Double.toString(simulationConfig.getDeltaT()).substring(2) + ".json";
+        String inputPath = "Simulation/Input/input.json";
+        SimulationConfig simulationConfig = readConfig(inputPath);
+        writeStatus(simulationConfig);
 
-        System.out.println("Starting simulation with " + simulationConfig.getAlgorithm());
-        SimulationFactory simulationFactory = new SimulationFactory(simulationConfig);
-        simulationFactory.writeStatus(simulationConfig, SIM_INPUT_FILE);
-        System.out.println("Done!");
+        dumpedMethods(simulationConfig.getTotalTime(), simulationConfig.getDeltaT());
+        VerletDampedOscilations(simulationConfig);
     }
 
-    public SimulationFactory(SimulationConfig simulationConfig) {
-        switch (simulationConfig.getAlgorithm()) {
-            case "verlet":
-                VerletDampedOscilations(simulationConfig);
-                break;
-            case "beeman":
-                System.out.println("Beeman...");
-                break;
-            case "gear":
-                System.out.println("Gear...");
-            default:
-                System.out.println("Defaulted");
+    public static void dumpedMethods(double totalTime, double deltaTime){
+        BiFunction<Double, Double, Double> acelerationFuction = (pos, vel) -> (-Utils.K * pos - Utils.GAMMA * vel) / Utils.MASS;
+        double[] r = {Utils.INITIAL_POSITION, Utils.INITIAL_SPEED};
+
+        String[] methods = new String[]{"Beeman", "Gear", "Perfect"};
+        for(String method : methods){
+
+            System.out.println("Starting simulation with " + method);
+            String OutputPath = "Simulation/Output/" + method + "Output_" + Double.toString(deltaTime).substring(2) + ".csv";
+
+            try {
+                FileWriter fw = new FileWriter(OutputPath);
+                BufferedWriter bw = new BufferedWriter(fw);
+
+                bw.write("timeFrame,position,velocity\n");
+                bw.write("0,"+ Utils.INITIAL_POSITION + "," + Utils.INITIAL_SPEED + "\n");
+
+                runMethod(method, totalTime, deltaTime, r, acelerationFuction, bw);
+
+                bw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("Done!");
         }
-
     }
 
-    public void VerletDampedOscilations(SimulationConfig simulationConfig) {
+    // Esto es feo pero es para estar seguro de usar lo mismo en la simulacion de marte y para no usar args variables
+    public static void runMethod(String method, double totalTime, double deltaTime, double[] r,  BiFunction<Double, Double, Double> acelerationFuction, BufferedWriter bw) throws IOException {
+
+        switch (method) {
+            case "Gear":
+                for(double actualTime = 0;  actualTime < totalTime; actualTime += deltaTime){
+                    r = Methods.GearMethod(r[0], r[1], deltaTime, acelerationFuction);
+                    bw.write(actualTime + "," + r[0] + "," + r[1] + "\n");
+                }
+                return;
+            case "Beeman":
+                for(double actualTime = 0, prevAceleration = acelerationFuction.apply(r[0], r[1]), actualAceleration;  actualTime < totalTime; actualTime += deltaTime){
+                    actualAceleration = acelerationFuction.apply(r[0], r[1]);
+                    r = Methods.BeemanMethod(r[0], r[1], deltaTime, acelerationFuction, prevAceleration);
+                    prevAceleration = actualAceleration;
+                    bw.write(actualTime + "," + r[0] + "," + r[1] + "\n");
+                }
+                return;
+            case "Perfect":
+                for(double actualTime = 0;  actualTime < totalTime; actualTime += deltaTime){
+                    r = Methods.PerfectMethod(actualTime);
+                    bw.write(actualTime + "," + r[0] + "," + r[1] + "\n");
+                }
+                return;
+            default:
+                throw new IllegalArgumentException("Método no reconocido: " + method);
+        }
+    }
+
+
+    public static void VerletDampedOscilations(SimulationConfig simulationConfig) {
         Particle particle = new Particle(Utils.INITIAL_POSITION, Utils.MASS, Utils.INITIAL_SPEED);
         double deltaT = simulationConfig.getDeltaT();
         String FILE_PATH = "Simulation/Output/VerletOutput_" + Double.toString(deltaT).substring(2) + ".csv";
@@ -89,13 +128,16 @@ public class SimulationFactory {
         return sConfig;
     }
 
-    public void writeStatus(SimulationConfig simulationConfig, String statusPath){
+    public static void writeStatus(SimulationConfig simulationConfig){
+        String statusFile = "Simulation/Output/Status_" + Double.toString(simulationConfig.getDeltaT()).substring(2) + ".json";
+
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("algorithm", simulationConfig.getAlgorithm());
             jsonObject.put("totalTime", simulationConfig.getTotalTime());
+            jsonObject.put("deltaT", simulationConfig.getDeltaT());
 
-            FileWriter writer_status = new FileWriter(statusPath);
+            FileWriter writer_status = new FileWriter(statusFile);
             writer_status.write(jsonObject.toString());
             writer_status.close();
 
@@ -103,4 +145,5 @@ public class SimulationFactory {
             System.out.println("Error al escribir en el archivo: " + e.getMessage());
         }
     }
+
 }
