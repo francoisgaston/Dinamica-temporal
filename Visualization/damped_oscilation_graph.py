@@ -18,12 +18,12 @@ DELTA_T = 0.001
 
 def main():
     if DELTA_T == 10**-3:
-        particle_coords = pd.read_csv(OUTPUT_PATH + 'VerletOutput_' + str(DELTA_T)[2:] + '.csv')
+        particle_coords = pd.read_csv(OUTPUT_PATH + 'BeemanOutput_' + str(DELTA_T)[2:] + '.csv')
     else:
-        particle_coords = pd.read_csv(OUTPUT_PATH + 'VerletOutput_' + '0E' + str(math.log10(DELTA_T))[:2] + '.csv')
+        particle_coords = pd.read_csv(OUTPUT_PATH + 'BeemanOutput_' + '0E' + str(math.log10(DELTA_T))[:2] + '.csv')
 
     plt.figure(figsize=(10, 6))
-    plt.plot(particle_coords['timeFrame'], particle_coords['position'], label=f'Verlet')
+    plt.plot(particle_coords['timeFrame'], particle_coords['position'], label=f'Gear')
 
     plt.xlabel('Tiempo (s)', fontsize=16)
     plt.ylabel('Posición (m)', fontsize=16)
