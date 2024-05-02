@@ -1,5 +1,3 @@
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.function.BiFunction;
 
 public class Methods {
@@ -41,7 +39,7 @@ public class Methods {
     }
 
     public static double[] PerfectMethod(double actualTime){
-        double newPos = Utils.AMPLITUDE * Math.pow(Math.E, -Utils.GAMMA * actualTime / (2 * Utils.MASS)) * Math.cos(Math.sqrt((Utils.K / Utils.MASS) - (Math.pow(Utils.GAMMA, 2) / (4 * Math.pow(Utils.MASS, 2)))) * actualTime);
+        double newPos = Utils.AMPLITUDE * Math.pow(Math.E, -Utils.GAMMA * actualTime / (2 * Utils.MASS_METHOD)) * Math.cos(Math.sqrt((Utils.K / Utils.MASS_METHOD) - (Math.pow(Utils.GAMMA, 2) / (4 * Math.pow(Utils.MASS_METHOD, 2)))) * actualTime);
 
         return new double[]{newPos, 0};
     }

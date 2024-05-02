@@ -15,8 +15,8 @@ public class MethodMain {
     }
 
     public static void dumpedMethods(double totalTime, double deltaTime){
-        BiFunction<Double, Double, Double> acelerationFuction = (pos, vel) -> (-Utils.K * pos - Utils.GAMMA * vel) / Utils.MASS;
-        double[] r = {Utils.INITIAL_POSITION, Utils.INITIAL_SPEED};
+        BiFunction<Double, Double, Double> acelerationFuction = (pos, vel) -> (-Utils.K * pos - Utils.GAMMA * vel) / Utils.MASS_METHOD;
+        double[] r = {Utils.INITIAL_POSITION_METHOD, Utils.INITIAL_SPEED_METHOD};
 
         String[] methods = new String[]{"Beeman", "Gear", "Analitica"};
         for(String method : methods){
@@ -29,7 +29,7 @@ public class MethodMain {
                 BufferedWriter bw = new BufferedWriter(fw);
 
                 bw.write("timeFrame,position,velocity\n");
-                bw.write("0,"+ Utils.INITIAL_POSITION + "," + Utils.INITIAL_SPEED + "\n");
+                bw.write("0,"+ Utils.INITIAL_POSITION_METHOD + "," + Utils.INITIAL_SPEED_METHOD + "\n");
 
                 runMethod(method, totalTime, deltaTime, r, acelerationFuction, bw);
 
@@ -72,7 +72,7 @@ public class MethodMain {
     }
 
     public static void VerletDampedOscilations(SimulationConfig simulationConfig) {
-        Particle particle = new Particle(Utils.INITIAL_POSITION, Utils.MASS, Utils.INITIAL_SPEED);
+        Particle particle = new Particle(Utils.INITIAL_POSITION_METHOD, Utils.MASS_METHOD, Utils.INITIAL_SPEED_METHOD);
         double deltaT = simulationConfig.getDeltaT();
         String FILE_PATH = "Simulation/Output/VerletOutput_" + Double.toString(deltaT).substring(2) + ".csv";
 

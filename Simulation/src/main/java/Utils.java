@@ -6,14 +6,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class Utils {
-    public static double MASS = 70;
+    public static double MASS_METHOD = 70;
     public static double K = Math.pow(10, 4);
     public static double GAMMA = 100;
-    public static double INITIAL_POSITION = 1;
+    public static double INITIAL_POSITION_METHOD = 1;
     public static double AMPLITUDE = 1; // Check
-    public static double INITIAL_SPEED = - AMPLITUDE * GAMMA / (2 * MASS);
+    public static double INITIAL_SPEED_METHOD = - AMPLITUDE * GAMMA / (2 * MASS_METHOD);
     public static double[] ALPHA_VELOCITY = {3.0 / 20, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
     public static double[] ALPHA_POSITION = {3.0 / 16, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
+    public static double G = 6.693 * Math.pow(10, -11);
+    public static double STATION_DISTANCE =
 
     public static SimulationConfig readConfig(String path){
         Gson gson = new Gson();

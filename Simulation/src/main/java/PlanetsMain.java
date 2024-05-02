@@ -5,8 +5,18 @@ public class PlanetsMain {
         SimulationConfig simulationConfig = Utils.readConfig(inputPath);
         Utils.writeStatus(simulationConfig);
 
-        System.out.println("ACA VA LO DE LOS PLANETAS");
+
+        simulatePlanets(velocity, alpha, dt, totalTime);
+
     }
 
+    public static void simulatePlanets( double vel, double alpha, double deltaTime, double totalTime){
+        double[] r = {0, 0};
 
+
+        for(double actualTime = 0; actualTime < totalTime; actualTime += deltaTime){
+            r = Methods.GearMethod(r[0], r[1], deltaTime, acelerationFuction, Utils.ALPHA_POSITION);
+            bw.write(actualTime + "," + r[0] + "," + r[1] + "\n");
+        }
+    }
 }
