@@ -20,8 +20,9 @@ public class PlanetsMain {
         double[][] martDistance = new double[(int) simulationConfig.getTotalTime()+2][4];
         Utils.readCSV("Simulation/Input/mars.csv", martDistance);
 
-        double[] nave = calculateShipPosition(earthDistance[0], alpha);
-        oneSimulation(nave, earthDistance[0], martDistance[0], dt, totalTime);
+        //oneSimulation(earthDistance[0], martDistance[0], dt, totalTime, alpha);
+
+        multiSimulation(earthDistance, martDistance, dt, totalTime, alpha);
     }
 
     public static double[] calculateShipPosition(double[] earthDistance, double alpha){
@@ -38,7 +39,28 @@ public class PlanetsMain {
         return new double[]{posX, posY, velX, velY};
     }
 
-    public static void oneSimulation(double[]nave, double[] tierra, double[] mars, double dt, double totalTime){
+    public static void multiSimulation(double[][] tierra, double[][] mars, double dt, double totalTime, double alpha){
+        try {
+            String OutputPath = "Simulation/Output/MultiPlanetsOutput.csv";
+            FileWriter fw = new FileWriter(OutputPath);
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            bw.write("timeFrame,spX,spY,svX,svY,mpX,mpY,epX,epY\n");
+
+            for(int i =0 ; i<300; i++){
+                String bestPosition = oneSimulation(mars[i],  tierra[i],  dt, totalTime, alpha);
+                bw.write(bestPosition);
+            }
+
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String oneSimulation(double[] tierra, double[] mars, double dt, double totalTime, double alpha){
+        double[] nave = calculateShipPosition(tierra, alpha);
+
         try {
             String OutputPath = "Simulation/Output/PlanetsOutput.csv";
             FileWriter fw = new FileWriter(OutputPath);
@@ -47,15 +69,17 @@ public class PlanetsMain {
             bw.write("timeFrame,spX,spY,svX,svY,mpX,mpY,epX,epY\n");
             bw.write("0," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] + "," + mars[0] + "," + mars[1] + "," + tierra[0] + "," + tierra[1] + "\n");
 
-            simulatePlanets(nave, mars,  tierra,  dt, totalTime, bw);
+            String bestPosition = simulatePlanets(nave, mars,  tierra,  dt, totalTime, bw);
 
             bw.close();
+            return bestPosition;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
-    public static void simulatePlanets(double[]nave, double[] tierra, double[] marte, double deltaTime, double totalTime, BufferedWriter bw) throws IOException {
+    public static String simulatePlanets(double[]nave, double[] tierra, double[] marte, double deltaTime, double totalTime, BufferedWriter bw) throws IOException {
         BiFunction<Double, Double, Double> TierraXFuction;
         BiFunction<Double, Double, Double> TierraYFuction;
         BiFunction<Double, Double, Double> MarteXFuction;
@@ -114,6 +138,8 @@ public class PlanetsMain {
 
             bw.write(deltaTime + "," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] + "," + marte[0] + "," + marte[1] + "," + tierra[0] + "," + tierra[1] + "\n");
         }
+
+        return String.format(deltaTime + "," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] + "," + marte[0] + "," + marte[1] + "," + tierra[0] + "," + tierra[1] + "\n");
     }
 
     /*
