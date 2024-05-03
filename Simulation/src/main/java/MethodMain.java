@@ -64,7 +64,7 @@ public class MethodMain {
             case "Verlet" -> {
                 for (double actualTime = 0; actualTime < totalTime; actualTime += deltaTime) {
                     double previousPosition = r[0] - deltaTime * r[1] +
-                            (-Utils.K * r[0] - Utils.GAMMA * r[1]) * (deltaTime * deltaTime) / (2 * Utils.MASS);
+                            (-Utils.K * r[0] - Utils.GAMMA * r[1]) * (deltaTime * deltaTime) / (2 * Utils.MASS_METHOD);
                     r = Methods.VerletMethod(r[0], r[1], previousPosition, deltaTime, acelerationFuction);
                     bw.write(actualTime + "," + r[0] + "," + r[1] + "\n");
                 }

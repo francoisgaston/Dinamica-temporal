@@ -1,5 +1,6 @@
 {
   "algorithm": "Beeman",
   "totalTime": 5,
-  "deltaT": 0.001
+  "deltaT": 0.001,
+  "alpha": 0
 }

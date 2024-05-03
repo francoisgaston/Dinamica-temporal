@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class Utils {
+
+    // TODAS LAS CONSTANTES EN SISTEMA INTERNACIONAL (metro, kilogramo, segundo)
     public static double MASS_METHOD = 70;
     public static double K = Math.pow(10, 4);
     public static double GAMMA = 100;
@@ -15,7 +17,18 @@ public class Utils {
     public static double[] ALPHA_VELOCITY = {3.0 / 20, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
     public static double[] ALPHA_POSITION = {3.0 / 16, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
     public static double G = 6.693 * Math.pow(10, -11);
-    public static double STATION_DISTANCE =
+    public static double STATION_DISTANCE = 1500 * Math.pow(10, 3);
+    public static double INTIAL_DELTA_V = 7.12 * Math.pow(10, 3);
+    public static double SHIP_MASS = 2 * Math.pow(10, 5);
+    public static double SUN_POSITION_X = 0;
+    public static double SUN_POSITION_Y = 0;
+    public static double MARS_MASS = 0; //TODO
+    public static double MARS_RADIUS = 0; //TODO
+    public static double SUN_MASS = 0; //TODO
+    public static double EARTH_MASS = 0; //TODO
+    public static double EARTH_RADIUS = 0; //TODO
+
+
 
     public static SimulationConfig readConfig(String path){
         Gson gson = new Gson();
