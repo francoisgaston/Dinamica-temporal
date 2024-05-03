@@ -20,9 +20,9 @@ public class PlanetsMain {
         double[][] martDistance = new double[(int) simulationConfig.getTotalTime()+2][4];
         Utils.readCSV("Simulation/Input/mars.csv", martDistance);
 
-        //oneSimulation(earthDistance[0], martDistance[0], dt, totalTime, alpha);
+        oneSimulation(earthDistance[0], martDistance[0], dt, totalTime, alpha);
 
-        multiSimulation(earthDistance, martDistance, dt, totalTime, alpha);
+        //multiSimulation(earthDistance, martDistance, dt, totalTime, alpha);
     }
 
     public static double[] calculateShipPosition(double[] earthDistance, double alpha){
@@ -79,7 +79,7 @@ public class PlanetsMain {
         return null;
     }
 
-    public static String simulatePlanets(double[]nave, double[] tierra, double[] marte, double deltaTime, double totalTime, BufferedWriter bw) throws IOException {
+    public static String simulatePlanets(double[]nave, double[] marte, double[] tierra, double deltaTime, double totalTime, BufferedWriter bw) throws IOException {
         BiFunction<Double, Double, Double> TierraXFuction;
         BiFunction<Double, Double, Double> TierraYFuction;
         BiFunction<Double, Double, Double> MarteXFuction;
