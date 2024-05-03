@@ -71,8 +71,9 @@ public class Utils {
                 // Split the line by the separator to get individual values
                 String[] csvLine = line.split(CSV_SEPARATOR);
                 // Process the data here
-                data[i][0] = Float.parseFloat(csvLine[0]) * Math.pow(10, 3);
-                data[i][1] = Float.parseFloat(csvLine[1]) * Math.pow(10, 3);
+                for(int j = 0; j < csvLine.length; j++){
+                    data[i][j] = Float.parseFloat(csvLine[j]) * Math.pow(10, 3);
+                }
                 i++;
             }
         } catch (IOException e) {

@@ -14,9 +14,9 @@ public class PlanetsMain {
         double totalTime = simulationConfig.getTotalTime();
         double alpha = simulationConfig.getAlpha();
 
-        double[][] earthDistance = new double[367][4];
+        double[][] earthDistance = new double[(int) totalTime+2][4];
         Utils.readCSV("Simulation/Input/earth.csv", earthDistance);
-        double[][] martDistance = new double[367][2];
+        double[][] martDistance = new double[(int) totalTime+2][2];
         Utils.readCSV("Simulation/Input/mars.csv", martDistance);
         double vTierraTangencial = Math.sqrt(Math.pow(earthDistance[0][2], 2) + Math.pow(earthDistance[0][3], 2));
 
