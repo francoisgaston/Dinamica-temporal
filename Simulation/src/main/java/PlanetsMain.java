@@ -47,7 +47,7 @@ public class PlanetsMain {
 
             bw.write("timeFrame,spX,spY,svX,svY,mpX,mpY,epX,epY\n");
 
-            for(int i =0 ; i<300; i++){
+            for(int i =0 ; i<tierra.length; i++){
                 String bestPosition = oneSimulation(mars[i],  tierra[i],  dt, totalTime, alpha);
                 bw.write(bestPosition);
             }
