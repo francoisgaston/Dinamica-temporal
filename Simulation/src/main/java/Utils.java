@@ -1,6 +1,7 @@
 import com.google.gson.Gson;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,11 +23,11 @@ public class Utils {
     public static double SHIP_MASS = 2 * Math.pow(10, 5);
     public static double SUN_POSITION_X = 0;
     public static double SUN_POSITION_Y = 0;
-    public static double MARS_MASS = 0; //TODO
-    public static double MARS_RADIUS = 0; //TODO
-    public static double SUN_MASS = 0; //TODO
-    public static double EARTH_MASS = 0; //TODO
-    public static double EARTH_RADIUS = 0; //TODO
+    public static double SUN_MASS = 1.9891 * Math.pow(10, 30);
+    public static double MARS_MASS = 6.39 * Math.pow(10, 23);
+    public static double MARS_RADIUS = 3389.5 * Math.pow(10, 3);
+    public static double EARTH_MASS = 5.972 * Math.pow(10, 24);
+    public static double EARTH_RADIUS = 6378 * Math.pow(10, 3);
 
 
 
@@ -59,4 +60,23 @@ public class Utils {
         }
     }
 
+    public static void readCSV(String path, double[][] data){
+        String line = "";
+        String CSV_SEPARATOR = ",";
+        int i = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            // Read the CSV file line by line
+            br.readLine();
+            while ((line = br.readLine()) != null) {
+                // Split the line by the separator to get individual values
+                String[] csvLine = line.split(CSV_SEPARATOR);
+                // Process the data here
+                data[i][0] = Float.parseFloat(csvLine[0]) * Math.pow(10, 3);
+                data[i][1] = Float.parseFloat(csvLine[1]) * Math.pow(10, 3);
+                i++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

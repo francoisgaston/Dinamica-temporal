@@ -1,5 +1,6 @@
 {
-  "algorithm": "Beeman",
-  "totalTime": 5,
-  "deltaT": 0.001
+  "algorithm": "Gear",
+  "totalTime": 366,
+  "deltaT": 24,
+  "alpha": 0
 }
