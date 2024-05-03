@@ -1,8 +1,9 @@
 import csv
 
 # Archivo de entrada
-input_file = '../Simulation/Input/horizons_results_earth.txt'
-output_file = '../Simulation/Input/earth.csv'
+planet = "mars"
+input_file = '../Simulation/Input/horizons_results_' + planet + '.txt'
+output_file = '../Simulation/Input/' + planet + '.csv'
 
 # Lista para guardar los datos
 data = []
