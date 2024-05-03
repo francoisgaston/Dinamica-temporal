@@ -2,3 +2,5 @@
 Simulation/Output/*.*
 target
 
+Visualization/*.mp4
+Visualization/saved_output
