@@ -1,5 +1,3 @@
-import javax.imageio.plugins.tiff.GeoTIFFTagSet;
-import javax.swing.event.MouseInputListener;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -49,29 +47,37 @@ public class PlanetsMain {
     public static void simulatePlanets(double posX, double posY, double velX, double velY, double alpha, double deltaTime, double totalTime, double[][] martDistance, double[][] earthDistance, BufferedWriter bw) throws IOException {
         BiFunction<Double, Double, Double> acelerationXFuction;
         BiFunction<Double, Double, Double> acelerationYFuction;
-        double[] rx = {posX, velX};
-        double[] ry = {posY, velY};
+        double[] r = {posX, posY, velX, velY};
+
+        double posXprev = posX;
+        double posYprev = posY;
+        double auxPosYprev, auxPosXprev;
 
         int index = 0;
         for (double actualTime = 0; actualTime < totalTime; actualTime+= deltaTime){
             int finalIndex = index;
+            auxPosXprev = r[0];
+            auxPosYprev = r[1];
 
             acelerationXFuction = (positionX, positionY) -> Utils.G * (
                         Utils.SUN_MASS * (Utils.SUN_POSITION_X - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(Utils.SUN_POSITION_X - positionX, 2) + Math.pow(Utils.SUN_POSITION_Y - positionY, 2)), 3)) +
                         Utils.MARS_MASS * (martDistance[finalIndex][0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(martDistance[finalIndex][0] - positionX, 2) + Math.pow(martDistance[finalIndex][1] - positionY, 2)), 3)) +
                         Utils.EARTH_MASS * (earthDistance[finalIndex][0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(earthDistance[finalIndex][0] - positionX, 2) + Math.pow(earthDistance[finalIndex][1] - positionY, 2)), 3))
                         );
-            rx = Methods.GearMethod(rx[0], rx[1], deltaTime, acelerationXFuction, Utils.ALPHA_POSITION);
 
             acelerationYFuction = (positionX, positionY) -> Utils.G * (
                     Utils.SUN_MASS * (Utils.SUN_POSITION_Y - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(Utils.SUN_POSITION_X - positionX, 2) + Math.pow(Utils.SUN_POSITION_Y - positionY, 2)), 3)) +
                             Utils.MARS_MASS * (martDistance[finalIndex][1] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(martDistance[finalIndex][0] - positionX, 2) + Math.pow(martDistance[finalIndex][1] - positionY, 2)), 3)) +
                             Utils.EARTH_MASS * (earthDistance[finalIndex][1] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(earthDistance[finalIndex][0] - positionX, 2) + Math.pow(earthDistance[finalIndex][1] - positionY, 2)), 3))
             );
-            ry = Methods.GearMethod(ry[0], ry[1], deltaTime, acelerationYFuction, Utils.ALPHA_POSITION);
+
+            r = Methods.TraditionalBeemanMethod(posXprev, posYprev, r[0], r[1], r[2], r[3], deltaTime, acelerationXFuction, acelerationYFuction);
+
+            posXprev = auxPosXprev;
+            posYprev = auxPosYprev;
             index++;
 
-            bw.write(deltaTime*index + "," + rx[0] + "," + ry[0] + "," + rx[1] + "," + ry[1] + "," + martDistance[index][0] + "," + martDistance[index][1] + "," + earthDistance[index][0] + "," + earthDistance[index][1] + "\n");
+            bw.write(deltaTime*index + "," + r[0] + "," + r[1] + "," + r[2] + "," + r[3] + "," + martDistance[index][0] + "," + martDistance[index][1] + "," + earthDistance[index][0] + "," + earthDistance[index][1] + "\n");
         }
     }
 }
