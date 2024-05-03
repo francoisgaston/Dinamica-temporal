@@ -42,11 +42,17 @@ def cuadratic_error():
         if method == 'Analitica':
             continue
         ecm = []
+        i=0
         for time_step in TIME_STEPS:
             analytical_coords = pd.read_csv(OUTPUT_PATH + 'Analitica' +  'Output_' + time_step + '.csv')
             method_coords = pd.read_csv(OUTPUT_PATH + method + 'Output_' + time_step + '.csv')
 
-            ecm.append(calculate_ecm(analytical_coords['position'], method_coords['position']))
+            if method == 'Verlet':
+                ecm.append(calculate_ecm_verlet(analytical_coords['position'], method_coords['position']))
+            else:
+                ecm.append(calculate_ecm(analytical_coords['position'], method_coords['position'], 5 / time_steps[i]))
+
+            i += 1
 
         print('Length ecm: ', len(ecm))
         print('Length time: ', len(time_steps))
@@ -61,15 +67,21 @@ def cuadratic_error():
     plt.show()
 
 
-def calculate_ecm(analytical_method, aprox_method):
+def calculate_ecm_verlet(analytical_method, aprox_method):
     square_diff = []
     for analytical, method in zip(analytical_method, aprox_method):
         square_diff.append((float(analytical) - float(method)) ** 2)
     return np.mean(square_diff)
 
+def calculate_ecm(analytical_method, aprox_method, iterations):
+    square_diff = []
+    for i in range(1,int(iterations)):
+        square_diff.append((float(analytical_method[i]) - float(aprox_method[i-1])) ** 2)
+    return np.mean(square_diff)
+
 
 def main():
-    #plots()
+    plots()
     cuadratic_error()
 
 
