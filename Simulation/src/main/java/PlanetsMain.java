@@ -45,9 +45,9 @@ public class PlanetsMain {
     public static void simulatePlanets(double posX, double posY, double velX, double velY, double alpha, double deltaTime, double totalTime, double[][] martDistance, double[][] earthDistance, BufferedWriter bw) throws IOException {
         BiFunction<Double, Double, Double> acelerationXFuction;
         BiFunction<Double, Double, Double> acelerationYFuction;
-
         double[] rx = {posX, velX};
         double[] ry = {posY, velY};
+
         int index = 0;
         for (double actualTime = 0; actualTime < totalTime; actualTime+= deltaTime){
             int finalIndex = index;
@@ -65,8 +65,9 @@ public class PlanetsMain {
                             Utils.EARTH_MASS * (earthDistance[finalIndex][1] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(earthDistance[finalIndex][0] - positionX, 2) + Math.pow(earthDistance[finalIndex][1] - positionY, 2)), 3))
             );
             ry = Methods.GearMethod(ry[0], ry[1], deltaTime, acelerationYFuction, Utils.ALPHA_POSITION);
-            bw.write(deltaTime*index + "," + rx[0] + "," + ry[0] + "," + rx[1] + "," + ry[1] + "," + martDistance[index][0] + "," + martDistance[index][1] + "," + earthDistance[index][0] + "," + earthDistance[index][1] + "\n");
             index++;
+
+            bw.write(deltaTime*index + "," + rx[0] + "," + ry[0] + "," + rx[1] + "," + ry[1] + "," + martDistance[index][0] + "," + martDistance[index][1] + "," + earthDistance[index][0] + "," + earthDistance[index][1] + "\n");
         }
     }
 }
