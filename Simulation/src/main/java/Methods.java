@@ -38,14 +38,12 @@ public class Methods {
         return new double[]{newPos, newVel};
     }
 
-    public static double[] TraditionalBeemanMethod(double posXprev, double posYprev, double posX, double posY, double velX, double velY, double deltaTime, BiFunction<Double, Double, Double> acelerationXFuction, BiFunction<Double, Double, Double> acelerationYFuction){
-        double prevAceleration = acelerationXFuction.apply(posXprev, posYprev);
+    public static double[] TraditionalBeemanMethod(double prevAccelX, double prevAccelY, double posX, double posY, double velX, double velY, double deltaTime, BiFunction<Double, Double, Double> acelerationXFuction, BiFunction<Double, Double, Double> acelerationYFuction){
+        double newPosX = posX + velX * deltaTime + (2.0/3) *  acelerationXFuction.apply(posX, posY) * Math.pow(deltaTime, 2) - (1.0/6) * prevAccelX * Math.pow(deltaTime, 2);
+        double newPosY = posY + velY * deltaTime + (2.0/3) *  acelerationYFuction.apply(posX, posY) * Math.pow(deltaTime, 2) - (1.0/6) * prevAccelY * Math.pow(deltaTime, 2);
 
-        double newPosX = posX + velX * deltaTime + (2.0/3) *  acelerationXFuction.apply(posX, posY) * Math.pow(deltaTime, 2) - (1.0/6) * prevAceleration * Math.pow(deltaTime, 2);
-        double newPosY = posY + velY * deltaTime + (2.0/3) *  acelerationYFuction.apply(posX, posY) * Math.pow(deltaTime, 2) - (1.0/6) * prevAceleration * Math.pow(deltaTime, 2);
-
-        double newVelX = velX + (1.0/3) * acelerationXFuction.apply(newPosX, newPosY) * deltaTime + (5.0/6) * acelerationXFuction.apply(posX, posY) * deltaTime - (1.0/6) * prevAceleration * deltaTime;
-        double newVelY = velY + (1.0/3) * acelerationYFuction.apply(newPosX, newPosY) * deltaTime + (5.0/6) * acelerationYFuction.apply(posX, posY) * deltaTime - (1.0/6) * prevAceleration * deltaTime;
+        double newVelX = velX + (1.0/3) * acelerationXFuction.apply(newPosX, newPosY) * deltaTime + (5.0/6) * acelerationXFuction.apply(posX, posY) * deltaTime - (1.0/6) * prevAccelX * deltaTime;
+        double newVelY = velY + (1.0/3) * acelerationYFuction.apply(newPosX, newPosY) * deltaTime + (5.0/6) * acelerationYFuction.apply(posX, posY) * deltaTime - (1.0/6) * prevAccelY * deltaTime;
 
         return new double[]{newPosX, newPosY, newVelX, newVelY};
     }
