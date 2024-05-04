@@ -85,6 +85,5 @@ def main():
     cuadratic_error()
 
 
-
 if __name__ == '__main__':
     main()

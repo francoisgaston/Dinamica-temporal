@@ -30,10 +30,10 @@ public class Methods {
 
     public static double[] BeemanMethod(double pos, double vel, double deltaTime, BiFunction<Double, Double, Double> acelerationFuction, double prevAceleration){
         double newPos = pos + vel * deltaTime + (2.0/3) *  acelerationFuction.apply(pos, vel) * Math.pow(deltaTime, 2) - (1.0/6) * prevAceleration * Math.pow(deltaTime, 2);
-        double newPredictVel = vel + (3.0/2) * acelerationFuction.apply(pos, vel) * deltaTime - (1.0/2) * acelerationFuction.apply(pos, vel) * deltaTime;
+        double newPredictVel = vel + (3.0/2) * acelerationFuction.apply(pos, vel) * deltaTime - (1.0/2) * prevAceleration * deltaTime;
 
         double newAceleration = acelerationFuction.apply(newPos, newPredictVel);
-        double newVel = vel + (1.0/3) * newAceleration * deltaTime + (5.0/6) * acelerationFuction.apply(pos, vel) * deltaTime - (1.0/6) * acelerationFuction.apply(pos, vel) * deltaTime;
+        double newVel = vel + (1.0/3) * newAceleration * deltaTime + (5.0/6) * acelerationFuction.apply(pos, vel) * deltaTime - (1.0/6) * prevAceleration * deltaTime;
 
         return new double[]{newPos, newVel};
     }

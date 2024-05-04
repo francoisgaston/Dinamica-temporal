@@ -11,7 +11,6 @@ public class MethodMain {
         Utils.writeStatus(simulationConfig);
 
         dumpedMethods(simulationConfig.getTotalTime(), simulationConfig.getDeltaT());
-        //VerletDampedOscilations(simulationConfig);
     }
 
     public static void dumpedMethods(double totalTime, double deltaTime){
