@@ -20,6 +20,7 @@ public class Utils {
     public static double G = 6.693 * Math.pow(10, -11);
     public static double STATION_DISTANCE = 1500 * Math.pow(10, 3);
     public static double INTIAL_DELTA_V = 7.12 * Math.pow(10, 3);
+    public static double INITIAL_NAVE_V = 8 * Math.pow(10, 3);
     public static double SHIP_MASS = 2 * Math.pow(10, 5);
     public static double SUN_POSITION_X = 0;
     public static double SUN_POSITION_Y = 0;
