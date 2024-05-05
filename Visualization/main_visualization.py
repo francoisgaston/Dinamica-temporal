@@ -9,9 +9,9 @@ import cv2
 # ---------------------------------------------------
 # FILES STUFF
 # ---------------------------------------------------
-CONFIG_FILE = '../Simulation/output/Status_'
+CONFIG_FILE = '../Simulation/Output/Status.json'
 OPENCV_OUTPUT_FILENAME = 'visualization'
-SIMULATION_OUTPUT = '../Simulation/Output/PlanetsOutput.csv'
+SIMULATION_OUTPUT = '../Simulation/Output/PlanetOutput.csv'
 MP4_FORMAT = 'mp4'
 EARTH = 'earth.csv'
 MARS = 'mars.csv'

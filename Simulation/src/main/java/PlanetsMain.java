@@ -22,9 +22,9 @@ public class PlanetsMain {
         double[][] martDistance = new double[(int) 367][4];
         Utils.readCSV("Simulation/Input/mars.csv", martDistance);
 
-        singleSimulation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, initialTime);
+        //singleSimulation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, initialTime);
 
-        //initialVariation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw);
+        initialVariation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw);
 
         //deltaTimeVariation(earthDistance, martDistance, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, initialTime);
 
@@ -54,7 +54,7 @@ public class PlanetsMain {
     public static void initialVariation(double[][] tierra, double[][] mars, double dt, double totalTime, double velocity, double alpha, int dw){
         boolean complete = false;
 
-        for(int i =170 ; i<190; i++){
+        for(int i =150 ; i<300; i++){
             System.out.println(i);
             String OutputPath = "Simulation/Output/PlanetOutput_" + i + ".csv";
             oneSimulation(tierra[i], mars[i], dt, totalTime, velocity, alpha, dw, complete, OutputPath);
@@ -83,7 +83,7 @@ public class PlanetsMain {
 
             double[] nave = calculateShipPosition(tierra, velocity, alpha);
 
-            bw.write("timeFrame,spX,spY,svX,svY,mpX,mpY,epX,epY\n");
+            bw.write("timeFrame,spX,spY,svX,svY,mpX,mpY,mvX,mvY,epX,epY,evX,evY\n");
             bw.write("0" +
                     "," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] +
                     "," + mars[0] + "," + mars[1] + "," + mars[2] + "," + mars[3] +
