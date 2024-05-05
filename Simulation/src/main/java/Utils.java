@@ -48,7 +48,6 @@ public class Utils {
 
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("algorithm", simulationConfig.getAlgorithm());
             jsonObject.put("totalTime", simulationConfig.getTotalTime());
             jsonObject.put("deltaT", simulationConfig.getDeltaT());
 

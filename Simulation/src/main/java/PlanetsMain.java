@@ -50,7 +50,6 @@ public class PlanetsMain {
             int dw = (int) (totalTime/dt);
             for(int i =0 ; i<10; i++){
                 double[] nave = calculateShipPosition(tierra[i], alpha);
-
                 simulatePlanets(nave, mars[i],  tierra[i],  dt, totalTime, bw, dw);
             }
 
@@ -61,12 +60,12 @@ public class PlanetsMain {
     }
 
     public static void oneSimulation(double[] tierra, double[] mars, double dt, double totalTime, double alpha, int deltaWrite){
-        double[] nave = calculateShipPosition(tierra, alpha);
-
         try {
             String OutputPath = "Simulation/Output/PlanetsOutput.csv";
             FileWriter fw = new FileWriter(OutputPath);
             BufferedWriter bw = new BufferedWriter(fw);
+
+            double[] nave = calculateShipPosition(tierra, alpha);
 
             bw.write("timeFrame,spX,spY,svX,svY,mpX,mpY,epX,epY\n");
             bw.write("0," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] + "," + mars[0] + "," + mars[1] + "," + tierra[0] + "," + tierra[1] + "\n");

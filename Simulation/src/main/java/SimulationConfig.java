@@ -1,5 +1,4 @@
 public class SimulationConfig {
-    private String algorithm;
     private double totalTime;
     private double deltaT;
     private double deltaW;
@@ -15,9 +14,6 @@ public class SimulationConfig {
     }
     public double getTotalTime() {
         return totalTime;
-    }
-    public String getAlgorithm() {
-        return algorithm;
     }
     public double getAlpha() {
         return alpha;
