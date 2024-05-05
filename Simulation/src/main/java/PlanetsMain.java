@@ -13,6 +13,7 @@ public class PlanetsMain {
         //dt y totalTime en días de input y aca lo paso a segundos
         double dt = simulationConfig.getDeltaT()*24*60*60;
         double totalTime = simulationConfig.getTotalTime()*24*60*60;
+        int initialTime = simulationConfig.getInitialTime();
         double alpha = simulationConfig.getAlpha();
         int dw = (int) (simulationConfig.getDeltaW()/simulationConfig.getDeltaT());
 
@@ -21,37 +22,74 @@ public class PlanetsMain {
         double[][] martDistance = new double[(int) 367][4];
         Utils.readCSV("Simulation/Input/mars.csv", martDistance);
 
-        oneSimulation(earthDistance[180], martDistance[180], dt, totalTime, alpha, dw);
-        //multiSimulation(earthDistance, martDistance, dt, totalTime, alpha);
+        singleSimulation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, initialTime);
+
+        //initialVariation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw);
+
+        //deltaTimeVariation(earthDistance, martDistance, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, initialTime);
+
+        //velocityVariation(earthDistance, martDistance, dt, totalTime, alpha, dw, initialTime);
     }
 
-    public static double[] calculateShipPosition(double[] earthDistance, double alpha){
-        double vTierraTangencial = Math.sqrt(Math.pow(earthDistance[2], 2) + Math.pow(earthDistance[3], 2));
+    public static void velocityVariation(double[][] tierra, double[][] mars, double dt, double totalTime, double alpha, int dw, int initialTime){
+        boolean complete = false;
 
-        double dTierra = Math.sqrt(Math.pow(earthDistance[0], 2) + Math.pow(earthDistance[1], 2));
-        double posX = (dTierra + Utils.EARTH_RADIUS + Utils.STATION_DISTANCE) * earthDistance[0] / dTierra;
-        double posY = (dTierra + Utils.EARTH_RADIUS + Utils.STATION_DISTANCE) * earthDistance[1] / dTierra;
-
-        double vTangencialNave = Utils.INTIAL_DELTA_V + Utils.INITIAL_NAVE_V + vTierraTangencial;
-        double velX = -vTangencialNave * earthDistance[1] / dTierra;
-        double velY = vTangencialNave * earthDistance[0] / dTierra;
-
-        return new double[]{posX, posY, velX, velY};
+        for(double vel=0 ; vel < Utils.INITIAL_NAVE_V * 2 ; vel+= Utils.INITIAL_NAVE_V/10){
+            System.out.println(vel);
+            String OutputPath = "Simulation/Output/PlanetOutput_" + vel + ".csv";
+            oneSimulation(tierra[initialTime], mars[initialTime], dt, totalTime, vel, alpha, dw, complete, OutputPath);
+        }
     }
 
-    public static void multiSimulation(double[][] tierra, double[][] mars, double dt, double totalTime, double alpha){
+    public static void deltaTimeVariation(double[][] tierra, double[][] mars, double totalTime, double velocity, double alpha, int dw, int initialTime){
+        boolean complete = false;
+
+        for(double dt=1.0 ; dt>0.0001; dt= dt / 10.0){
+            System.out.println(dt);
+            String OutputPath = "Simulation/Output/PlanetOutput_" + dt + ".csv";
+            oneSimulation(tierra[initialTime], mars[initialTime], dt*24*60*60, totalTime, velocity, alpha, dw, complete, OutputPath);
+        }
+    }
+
+    public static void initialVariation(double[][] tierra, double[][] mars, double dt, double totalTime, double velocity, double alpha, int dw){
+        boolean complete = false;
+
+        for(int i =170 ; i<190; i++){
+            System.out.println(i);
+            String OutputPath = "Simulation/Output/PlanetOutput_" + i + ".csv";
+            oneSimulation(tierra[i], mars[i], dt, totalTime, velocity, alpha, dw, complete, OutputPath);
+        }
+    }
+
+    public static void singleSimulation(double[][] tierra, double[][] mars, double dt, double totalTime, double velocity, double alpha, int dw, int initialTime){
+        boolean complete = false;
+        String OutputPath = "Simulation/Output/PlanetOutput.csv";
+        oneSimulation(tierra[initialTime], mars[initialTime], dt, totalTime, velocity, alpha, dw, complete, OutputPath);
+    }
+
+
+
+
+
+
+
+
+
+
+    public static void oneSimulation(double[] tierra, double[] mars, double dt, double totalTime, double velocity, double alpha, int deltaWrite, boolean complete, String OutputPath){
         try {
-            String OutputPath = "Simulation/Output/MultiPlanetsOutput.csv";
             FileWriter fw = new FileWriter(OutputPath);
             BufferedWriter bw = new BufferedWriter(fw);
 
-            bw.write("timeFrame,spX,spY,svX,svY,mpX,mpY,epX,epY\n");
+            double[] nave = calculateShipPosition(tierra, velocity, alpha);
 
-            int dw = (int) (totalTime/dt);
-            for(int i =0 ; i<10; i++){
-                double[] nave = calculateShipPosition(tierra[i], alpha);
-                simulatePlanets(nave, mars[i],  tierra[i],  dt, totalTime, bw, dw);
-            }
+            bw.write("timeFrame,spX,spY,svX,svY,mpX,mpY,epX,epY\n");
+            bw.write("0" +
+                    "," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] +
+                    "," + mars[0] + "," + mars[1] + "," + mars[2] + "," + mars[3] +
+                    "," + tierra[0] + "," + tierra[1] + "," + tierra[2] + "," + tierra[3] + "\n");
+
+            simulatePlanets(nave, mars,  tierra,  dt, totalTime, bw, deltaWrite, complete);
 
             bw.close();
         } catch (IOException e) {
@@ -59,26 +97,7 @@ public class PlanetsMain {
         }
     }
 
-    public static void oneSimulation(double[] tierra, double[] mars, double dt, double totalTime, double alpha, int deltaWrite){
-        try {
-            String OutputPath = "Simulation/Output/PlanetsOutput.csv";
-            FileWriter fw = new FileWriter(OutputPath);
-            BufferedWriter bw = new BufferedWriter(fw);
-
-            double[] nave = calculateShipPosition(tierra, alpha);
-
-            bw.write("timeFrame,spX,spY,svX,svY,mpX,mpY,epX,epY\n");
-            bw.write("0," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] + "," + mars[0] + "," + mars[1] + "," + tierra[0] + "," + tierra[1] + "\n");
-
-            simulatePlanets(nave, mars,  tierra,  dt, totalTime, bw, deltaWrite);
-
-            bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void simulatePlanets(double[]nave, double[] marte, double[] tierra, double deltaTime, double totalTime, BufferedWriter bw, int deltaWrite) throws IOException {
+    public static void simulatePlanets(double[]nave, double[] marte, double[] tierra, double deltaTime, double totalTime, BufferedWriter bw, int deltaWrite, boolean complete) throws IOException {
         double[] tierraPrev = tierra;
         double[] martePrev = marte;
         double[] navePrev = nave;
@@ -122,7 +141,7 @@ public class PlanetsMain {
         double TierraPrevAccelerationY = TierraYFuction.apply(tierra[0], tierra[1]);
 
         int counterWrite = 0;
-        for (double actualTime = 0; actualTime < totalTime || Utils.MARS_RADIUS > Math.sqrt(Math.pow(nave[0]-marte[0], 2) + Math.pow(nave[1]-marte[1], 2) ); actualTime += deltaTime, counterWrite++) {
+        for (double actualTime = 0; actualTime < totalTime; actualTime += deltaTime, counterWrite++) {
             double[] tierraAux = tierra;
             double[] marteAux = marte;
             double[] naveAux = nave;
@@ -169,13 +188,36 @@ public class PlanetsMain {
             TierraPrevAccelerationX = TierraXFuction.apply(tierraAux[0], tierraAux[1]);
             TierraPrevAccelerationY = TierraYFuction.apply(tierraAux[0], tierraAux[1]);
 
-            if(counterWrite % deltaWrite == 0){
-                bw.write(deltaTime + "," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] + "," + marte[0] + "," + marte[1] + "," + tierra[0] + "," + tierra[1] + "\n");
+            if(!complete && Utils.MARS_RADIUS * 1000 > Math.sqrt(Math.pow(nave[0]-marte[0], 2) + Math.pow(nave[1]-marte[1], 2))){
+                bw.write(actualTime +
+                        "," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] +
+                        "," + marte[0] + "," + marte[1] + "," + marte[2] + "," + marte[3] +
+                        "," + tierra[0] + "," + tierra[1] + "," + tierra[2] + "," + tierra[3] + "\n");
+                System.out.println("Choco");
+                return;
             }
-        }
-        if(Utils.MARS_RADIUS > Math.sqrt(Math.pow(nave[0]-marte[0], 2) + Math.pow(nave[1]-marte[1], 2))){
-            System.out.println("Choco");
+
+            if(counterWrite == deltaWrite){
+                counterWrite = 0;
+                bw.write(actualTime +
+                        "," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] +
+                        "," + marte[0] + "," + marte[1] + "," + marte[2] + "," + marte[3] +
+                        "," + tierra[0] + "," + tierra[1] + "," + tierra[2] + "," + tierra[3] + "\n");
+            }
         }
     }
 
+    public static double[] calculateShipPosition(double[] earthDistance, double velocity, double alpha){
+        double vTierraTangencial = Math.sqrt(Math.pow(earthDistance[2], 2) + Math.pow(earthDistance[3], 2));
+
+        double dTierra = Math.sqrt(Math.pow(earthDistance[0], 2) + Math.pow(earthDistance[1], 2));
+        double posX = (dTierra + Utils.EARTH_RADIUS + Utils.STATION_DISTANCE) * earthDistance[0] / dTierra;
+        double posY = (dTierra + Utils.EARTH_RADIUS + Utils.STATION_DISTANCE) * earthDistance[1] / dTierra;
+
+        double vTangencialNave = Utils.INTIAL_DELTA_V + velocity + vTierraTangencial;
+        double velX = -vTangencialNave * earthDistance[1] / dTierra;
+        double velY = vTangencialNave * earthDistance[0] / dTierra;
+
+        return new double[]{posX, posY, velX, velY};
+    }
 }

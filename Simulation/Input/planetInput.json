@@ -1,6 +1,7 @@
 {
   "totalTime": 365,
   "deltaT": 0.001,
+  "initialTime": 180,
   "deltaW": 1,
   "alpha": 0
 }

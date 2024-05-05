@@ -30,8 +30,6 @@ public class Utils {
     public static double EARTH_MASS = 5.972 * Math.pow(10, 24);
     public static double EARTH_RADIUS = 6378 * Math.pow(10, 3);
 
-
-
     public static SimulationConfig readConfig(String path){
         Gson gson = new Gson();
         SimulationConfig sConfig = null;
@@ -44,12 +42,15 @@ public class Utils {
     }
 
     public static void writeStatus(SimulationConfig simulationConfig){
-        String statusFile = "Simulation/Output/Status_" + Double.toString(simulationConfig.getDeltaT()).substring(2) + ".json";
+        String statusFile = "Simulation/Output/Status.json";
 
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("totalTime", simulationConfig.getTotalTime());
             jsonObject.put("deltaT", simulationConfig.getDeltaT());
+            jsonObject.put("initialTime", simulationConfig.getInitialTime());
+            jsonObject.put("deltaW", simulationConfig.getDeltaW());
+            jsonObject.put("alpha", simulationConfig.getAlpha());
 
             FileWriter writer_status = new FileWriter(statusFile);
             writer_status.write(jsonObject.toString());
