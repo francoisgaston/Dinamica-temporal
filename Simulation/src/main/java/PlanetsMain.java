@@ -14,14 +14,14 @@ public class PlanetsMain {
         double dt = simulationConfig.getDeltaT()*24*60*60;
         double totalTime = simulationConfig.getTotalTime()*24*60*60;
         double alpha = simulationConfig.getAlpha();
+        int dw = (int) (simulationConfig.getDeltaW()/simulationConfig.getDeltaT());
 
         double[][] earthDistance = new double[(int) 367][4];
         Utils.readCSV("Simulation/Input/earth.csv", earthDistance);
         double[][] martDistance = new double[(int) 367][4];
         Utils.readCSV("Simulation/Input/mars.csv", martDistance);
 
-        oneSimulation(earthDistance[0], martDistance[0], dt, totalTime, alpha);
-
+        oneSimulation(earthDistance[180], martDistance[180], dt, totalTime, alpha, dw);
         //multiSimulation(earthDistance, martDistance, dt, totalTime, alpha);
     }
 
@@ -29,12 +29,12 @@ public class PlanetsMain {
         double vTierraTangencial = Math.sqrt(Math.pow(earthDistance[2], 2) + Math.pow(earthDistance[3], 2));
 
         double dTierra = Math.sqrt(Math.pow(earthDistance[0], 2) + Math.pow(earthDistance[1], 2));
-        double posX = (dTierra + Utils.EARTH_RADIUS + Utils.STATION_DISTANCE) * earthDistance[0] / dTierra; // dTierra -> earthDistance[0], STATION_DISTANCE_X
-        double posY = (dTierra + Utils.EARTH_RADIUS + Utils.STATION_DISTANCE) * earthDistance[1] / dTierra; // dTierra -> earthDistance[1], STATION_DISTANCE_Y
+        double posX = (dTierra + Utils.EARTH_RADIUS + Utils.STATION_DISTANCE) * earthDistance[0] / dTierra;
+        double posY = (dTierra + Utils.EARTH_RADIUS + Utils.STATION_DISTANCE) * earthDistance[1] / dTierra;
 
         double vTangencialNave = Utils.INTIAL_DELTA_V + Utils.INITIAL_NAVE_V + vTierraTangencial;
-        double velX = -vTangencialNave * earthDistance[1] / dTierra; // earthDistance[1] -> earthDistance[0]
-        double velY = vTangencialNave * earthDistance[0] / dTierra; // earthDistance[0] -> earthDistance[1]
+        double velX = -vTangencialNave * earthDistance[1] / dTierra;
+        double velY = vTangencialNave * earthDistance[0] / dTierra;
 
         return new double[]{posX, posY, velX, velY};
     }
@@ -47,9 +47,11 @@ public class PlanetsMain {
 
             bw.write("timeFrame,spX,spY,svX,svY,mpX,mpY,epX,epY\n");
 
-            for(int i =0 ; i<tierra.length; i++){
-                String bestPosition = oneSimulation(mars[i],  tierra[i],  dt, totalTime, alpha);
-                bw.write(bestPosition);
+            int dw = (int) (totalTime/dt);
+            for(int i =0 ; i<10; i++){
+                double[] nave = calculateShipPosition(tierra[i], alpha);
+
+                simulatePlanets(nave, mars[i],  tierra[i],  dt, totalTime, bw, dw);
             }
 
             bw.close();
@@ -58,7 +60,7 @@ public class PlanetsMain {
         }
     }
 
-    public static String oneSimulation(double[] tierra, double[] mars, double dt, double totalTime, double alpha){
+    public static void oneSimulation(double[] tierra, double[] mars, double dt, double totalTime, double alpha, int deltaWrite){
         double[] nave = calculateShipPosition(tierra, alpha);
 
         try {
@@ -69,54 +71,48 @@ public class PlanetsMain {
             bw.write("timeFrame,spX,spY,svX,svY,mpX,mpY,epX,epY\n");
             bw.write("0," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] + "," + mars[0] + "," + mars[1] + "," + tierra[0] + "," + tierra[1] + "\n");
 
-            String bestPosition = simulatePlanets(nave, mars,  tierra,  dt, totalTime, bw);
+            simulatePlanets(nave, mars,  tierra,  dt, totalTime, bw, deltaWrite);
 
             bw.close();
-            return bestPosition;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
     }
 
-    public static String simulatePlanets(double[]nave, double[] marte, double[] tierra, double deltaTime, double totalTime, BufferedWriter bw) throws IOException {
+    public static void simulatePlanets(double[]nave, double[] marte, double[] tierra, double deltaTime, double totalTime, BufferedWriter bw, int deltaWrite) throws IOException {
         double[] tierraPrev = tierra;
         double[] martePrev = marte;
         double[] navePrev = nave;
 
-        double[] finalMartePrev = martePrev;
-        double[] finalNavePrev = navePrev;
-        double[] finalTierraPrev = tierraPrev;
-
         BiFunction<Double, Double, Double> TierraXFuction = (positionX, positionY) -> Utils.G * (
                 Utils.SUN_MASS * (Utils.SUN_POSITION_X - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(Utils.SUN_POSITION_X - positionX, 2) + Math.pow(Utils.SUN_POSITION_Y - positionY, 2)), 3)) +
-                Utils.MARS_MASS * (finalMartePrev[0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(finalMartePrev[0] - positionX, 2) + Math.pow(finalMartePrev[1] - positionY, 2)), 3)) +
-                Utils.SHIP_MASS * (finalNavePrev[0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(finalNavePrev[0] - positionX, 2) + Math.pow(finalNavePrev[1] - positionY, 2)), 3))
+                Utils.MARS_MASS * (martePrev[0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(martePrev[0] - positionX, 2) + Math.pow(martePrev[1] - positionY, 2)), 3)) +
+                Utils.SHIP_MASS * (navePrev[0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(navePrev[0] - positionX, 2) + Math.pow(navePrev[1] - positionY, 2)), 3))
         );
         BiFunction<Double, Double, Double> TierraYFuction = (positionX, positionY) -> Utils.G * (
                 Utils.SUN_MASS * (Utils.SUN_POSITION_Y - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(Utils.SUN_POSITION_X - positionX, 2) + Math.pow(Utils.SUN_POSITION_Y - positionY, 2)), 3)) +
-                Utils.MARS_MASS * (finalMartePrev[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(finalMartePrev[0] - positionX, 2) + Math.pow(finalMartePrev[1] - positionY, 2)), 3)) +
-                Utils.SHIP_MASS * (finalNavePrev[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(finalNavePrev[0] - positionX, 2) + Math.pow(finalNavePrev[1] - positionY, 2)), 3))
+                Utils.MARS_MASS * (martePrev[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(martePrev[0] - positionX, 2) + Math.pow(martePrev[1] - positionY, 2)), 3)) +
+                Utils.SHIP_MASS * (navePrev[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(navePrev[0] - positionX, 2) + Math.pow(navePrev[1] - positionY, 2)), 3))
         );
         BiFunction<Double, Double, Double> MarteXFuction = (positionX, positionY) -> Utils.G * (
                 Utils.SUN_MASS * (Utils.SUN_POSITION_X - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(Utils.SUN_POSITION_X - positionX, 2) + Math.pow(Utils.SUN_POSITION_Y - positionY, 2)), 3)) +
-                Utils.SHIP_MASS * (finalNavePrev[0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(finalNavePrev[0] - positionX, 2) + Math.pow(finalNavePrev[1] - positionY, 2)), 3)) +
-                Utils.EARTH_MASS * (finalTierraPrev[0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(finalTierraPrev[0] - positionX, 2) + Math.pow(finalTierraPrev[1] - positionY, 2)), 3))
+                Utils.SHIP_MASS * (navePrev[0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(navePrev[0] - positionX, 2) + Math.pow(navePrev[1] - positionY, 2)), 3)) +
+                Utils.EARTH_MASS * (tierraPrev[0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(tierraPrev[0] - positionX, 2) + Math.pow(tierraPrev[1] - positionY, 2)), 3))
         );
         BiFunction<Double, Double, Double> MarteYFuction = (positionX, positionY) -> Utils.G * (
                 Utils.SUN_MASS * (Utils.SUN_POSITION_Y - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(Utils.SUN_POSITION_X - positionX, 2) + Math.pow(Utils.SUN_POSITION_Y - positionY, 2)), 3)) +
-                Utils.SHIP_MASS * (finalNavePrev[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(finalNavePrev[0] - positionX, 2) + Math.pow(finalNavePrev[1] - positionY, 2)), 3)) +
-                Utils.EARTH_MASS * (finalTierraPrev[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(finalTierraPrev[0] - positionX, 2) + Math.pow(finalTierraPrev[1] - positionY, 2)), 3))
+                Utils.SHIP_MASS * (navePrev[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(navePrev[0] - positionX, 2) + Math.pow(navePrev[1] - positionY, 2)), 3)) +
+                Utils.EARTH_MASS * (tierraPrev[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(tierraPrev[0] - positionX, 2) + Math.pow(tierraPrev[1] - positionY, 2)), 3))
         );
         BiFunction<Double, Double, Double> NaveXFuction = (positionX, positionY) -> Utils.G * (
                 Utils.SUN_MASS * (Utils.SUN_POSITION_X - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(Utils.SUN_POSITION_X - positionX, 2) + Math.pow(Utils.SUN_POSITION_Y - positionY, 2)), 3)) +
-                Utils.MARS_MASS * (finalMartePrev[0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(finalMartePrev[0] - positionX, 2) + Math.pow(finalMartePrev[1] - positionY, 2)), 3)) +
-                Utils.EARTH_MASS * (finalTierraPrev[0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(finalTierraPrev[0] - positionX, 2) + Math.pow(finalTierraPrev[1] - positionY, 2)), 3))
+                Utils.MARS_MASS * (martePrev[0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(martePrev[0] - positionX, 2) + Math.pow(martePrev[1] - positionY, 2)), 3)) +
+                Utils.EARTH_MASS * (tierraPrev[0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(tierraPrev[0] - positionX, 2) + Math.pow(tierraPrev[1] - positionY, 2)), 3))
         );
         BiFunction<Double, Double, Double> NaveYFuction = (positionX, positionY) -> Utils.G * (
                 Utils.SUN_MASS * (Utils.SUN_POSITION_Y - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(Utils.SUN_POSITION_X - positionX, 2) + Math.pow(Utils.SUN_POSITION_Y - positionY, 2)), 3)) +
-                Utils.MARS_MASS * (finalMartePrev[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(finalMartePrev[0] - positionX, 2) + Math.pow(finalMartePrev[1] - positionY, 2)), 3)) +
-                Utils.EARTH_MASS * (finalTierraPrev[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(finalTierraPrev[0] - positionX, 2) + Math.pow(finalTierraPrev[1] - positionY, 2)), 3))
+                Utils.MARS_MASS * (martePrev[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(martePrev[0] - positionX, 2) + Math.pow(martePrev[1] - positionY, 2)), 3)) +
+                Utils.EARTH_MASS * (tierraPrev[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(tierraPrev[0] - positionX, 2) + Math.pow(tierraPrev[1] - positionY, 2)), 3))
         );
 
         double NavePrevAccelerationX = NaveXFuction.apply(nave[0], nave[1]);
@@ -126,7 +122,8 @@ public class PlanetsMain {
         double TierraPrevAccelerationX = TierraXFuction.apply(tierra[0], tierra[1]);
         double TierraPrevAccelerationY = TierraYFuction.apply(tierra[0], tierra[1]);
 
-        for (double actualTime = 0; actualTime < totalTime; actualTime += deltaTime) {
+        int counterWrite = 0;
+        for (double actualTime = 0; actualTime < totalTime || Utils.MARS_RADIUS > Math.sqrt(Math.pow(nave[0]-marte[0], 2) + Math.pow(nave[1]-marte[1], 2) ); actualTime += deltaTime, counterWrite++) {
             double[] tierraAux = tierra;
             double[] marteAux = marte;
             double[] naveAux = nave;
@@ -141,10 +138,6 @@ public class PlanetsMain {
                             Utils.MARS_MASS * (marteAux[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(marteAux[0] - positionX, 2) + Math.pow(marteAux[1] - positionY, 2)), 3)) +
                             Utils.EARTH_MASS * (tierraAux[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(tierraAux[0] - positionX, 2) + Math.pow(tierraAux[1] - positionY, 2)), 3))
             );
-            nave = Methods.TraditionalBeemanMethod(NavePrevAccelerationX, NavePrevAccelerationY, nave[0], nave[1], nave[2], nave[3], deltaTime, NaveXFuction, NaveYFuction);
-            NavePrevAccelerationX = NaveXFuction.apply(naveAux[0], naveAux[1]);
-            NavePrevAccelerationY = NaveYFuction.apply(naveAux[0], naveAux[1]);
-
             MarteXFuction = (positionX, positionY) -> Utils.G * (
                     Utils.SUN_MASS * (Utils.SUN_POSITION_X - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(Utils.SUN_POSITION_X - positionX, 2) + Math.pow(Utils.SUN_POSITION_Y - positionY, 2)), 3)) +
                             Utils.SHIP_MASS * (naveAux[0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(naveAux[0] - positionX, 2) + Math.pow(naveAux[1] - positionY, 2)), 3)) +
@@ -155,10 +148,6 @@ public class PlanetsMain {
                             Utils.SHIP_MASS * (naveAux[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(naveAux[0] - positionX, 2) + Math.pow(naveAux[1] - positionY, 2)), 3)) +
                             Utils.EARTH_MASS * (tierraAux[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(tierraAux[0] - positionX, 2) + Math.pow(tierraAux[1] - positionY, 2)), 3))
             );
-            marte = Methods.TraditionalBeemanMethod(MartePrevAccelerationX, MartePrevAccelerationY, marte[0], marte[1], marte[2], marte[3], deltaTime, MarteXFuction, MarteYFuction);
-            MartePrevAccelerationX = MarteXFuction.apply(marteAux[0], marteAux[1]);
-            MartePrevAccelerationY = MarteYFuction.apply(marteAux[0], marteAux[1]);
-
             TierraXFuction = (positionX, positionY) -> Utils.G * (
                     Utils.SUN_MASS * (Utils.SUN_POSITION_X - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(Utils.SUN_POSITION_X - positionX, 2) + Math.pow(Utils.SUN_POSITION_Y - positionY, 2)), 3)) +
                             Utils.MARS_MASS * (marteAux[0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(marteAux[0] - positionX, 2) + Math.pow(marteAux[1] - positionY, 2)), 3)) +
@@ -169,53 +158,25 @@ public class PlanetsMain {
                             Utils.MARS_MASS * (marteAux[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(marteAux[0] - positionX, 2) + Math.pow(marteAux[1] - positionY, 2)), 3)) +
                             Utils.SHIP_MASS * (naveAux[1] - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(naveAux[0] - positionX, 2) + Math.pow(naveAux[1] - positionY, 2)), 3))
             );
+
+            marte = Methods.TraditionalBeemanMethod(MartePrevAccelerationX, MartePrevAccelerationY, marte[0], marte[1], marte[2], marte[3], deltaTime, MarteXFuction, MarteYFuction);
+            nave = Methods.TraditionalBeemanMethod(NavePrevAccelerationX, NavePrevAccelerationY, nave[0], nave[1], nave[2], nave[3], deltaTime, NaveXFuction, NaveYFuction);
             tierra = Methods.TraditionalBeemanMethod(TierraPrevAccelerationX, TierraPrevAccelerationY, tierra[0], tierra[1], tierra[2], tierra[3], deltaTime, TierraXFuction, TierraYFuction);
+
+            MartePrevAccelerationX = MarteXFuction.apply(marteAux[0], marteAux[1]);
+            MartePrevAccelerationY = MarteYFuction.apply(marteAux[0], marteAux[1]);
+            NavePrevAccelerationX = NaveXFuction.apply(naveAux[0], naveAux[1]);
+            NavePrevAccelerationY = NaveYFuction.apply(naveAux[0], naveAux[1]);
             TierraPrevAccelerationX = TierraXFuction.apply(tierraAux[0], tierraAux[1]);
             TierraPrevAccelerationY = TierraYFuction.apply(tierraAux[0], tierraAux[1]);
 
-            bw.write(deltaTime + "," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] + "," + marte[0] + "," + marte[1] + "," + tierra[0] + "," + tierra[1] + "\n");
+            if(counterWrite % deltaWrite == 0){
+                bw.write(deltaTime + "," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] + "," + marte[0] + "," + marte[1] + "," + tierra[0] + "," + tierra[1] + "\n");
+            }
         }
-
-        return String.format(deltaTime + "," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] + "," + marte[0] + "," + marte[1] + "," + tierra[0] + "," + tierra[1] + "\n");
-    }
-
-    /*
-    public static void simulatePlanets2(double posX, double posY, double velX, double velY, double alpha, double marsX, double marsY, double earthX, double earthY, double deltaTime, double totalTime, BufferedWriter bw) throws IOException {
-        BiFunction<Double, Double, Double> acelerationXFuction;
-        BiFunction<Double, Double, Double> acelerationYFuction;
-        double[] r = {posX, posY, velX, velY};
-
-        double posXprev = posX;
-        double posYprev = posY;
-        double auxPosYprev, auxPosXprev;
-
-        int index = 0;
-        for (double actualTime = 0; actualTime < totalTime; actualTime+= deltaTime){
-            int finalIndex = index;
-            auxPosXprev = r[0];
-            auxPosYprev = r[1];
-
-            acelerationXFuction = (positionX, positionY) -> Utils.G * (
-                        Utils.SUN_MASS * (Utils.SUN_POSITION_X - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(Utils.SUN_POSITION_X - positionX, 2) + Math.pow(Utils.SUN_POSITION_Y - positionY, 2)), 3)) +
-                        Utils.MARS_MASS * (martDistance[finalIndex][0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(martDistance[finalIndex][0] - positionX, 2) + Math.pow(martDistance[finalIndex][1] - positionY, 2)), 3)) +
-                        Utils.EARTH_MASS * (earthDistance[finalIndex][0] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(earthDistance[finalIndex][0] - positionX, 2) + Math.pow(earthDistance[finalIndex][1] - positionY, 2)), 3))
-                        );
-
-            acelerationYFuction = (positionX, positionY) -> Utils.G * (
-                    Utils.SUN_MASS * (Utils.SUN_POSITION_Y - positionY) / Math.abs(Math.pow(Math.sqrt(Math.pow(Utils.SUN_POSITION_X - positionX, 2) + Math.pow(Utils.SUN_POSITION_Y - positionY, 2)), 3)) +
-                            Utils.MARS_MASS * (martDistance[finalIndex][1] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(martDistance[finalIndex][0] - positionX, 2) + Math.pow(martDistance[finalIndex][1] - positionY, 2)), 3)) +
-                            Utils.EARTH_MASS * (earthDistance[finalIndex][1] - positionX) / Math.abs(Math.pow(Math.sqrt(Math.pow(earthDistance[finalIndex][0] - positionX, 2) + Math.pow(earthDistance[finalIndex][1] - positionY, 2)), 3))
-            );
-
-            r = Methods.TraditionalBeemanMethod(posXprev, posYprev, r[0], r[1], r[2], r[3], deltaTime, acelerationXFuction, acelerationYFuction);
-
-            posXprev = auxPosXprev;
-            posYprev = auxPosYprev;
-            index++;
-
-            bw.write(deltaTime*index + "," + r[0] + "," + r[1] + "," + r[2] + "," + r[3] + "," + martDistance[index][0] + "," + martDistance[index][1] + "," + earthDistance[index][0] + "," + earthDistance[index][1] + "\n");
+        if(Utils.MARS_RADIUS > Math.sqrt(Math.pow(nave[0]-marte[0], 2) + Math.pow(nave[1]-marte[1], 2))){
+            System.out.println("Choco");
         }
     }
 
-     */
 }

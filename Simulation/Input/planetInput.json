@@ -1,6 +1,7 @@
 {
   "algorithm": "Gear",
-  "totalTime": 365,
-  "deltaT": 1,
+  "totalTime": 3000,
+  "deltaT": 0.001,
+  "deltaW": 1,
   "alpha": 0
 }

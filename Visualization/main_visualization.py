@@ -44,8 +44,9 @@ def complete_visualization_opencv(lines):
     # SCALED_L = L * SCALE_FACTOR
     video_writer = cv2.VideoWriter(OPENCV_OUTPUT_FILENAME + '.' + MP4_FORMAT, fourcc, FPS, (VIDEO_RES,VIDEO_RES))
 
+    frame = np.full((int(VIDEO_RES),int(VIDEO_RES), 3), 255, dtype=np.uint8)
+
     for index, row in lines.iterrows():
-        frame = np.full((int(VIDEO_RES),int(VIDEO_RES), 3), 255, dtype=np.uint8)
 
         # Sun
         sun_pos = [int(VIDEO_RES/2), int(VIDEO_RES/2)]
