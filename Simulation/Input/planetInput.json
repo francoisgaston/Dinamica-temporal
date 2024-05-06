@@ -1,7 +1,7 @@
 {
   "totalTime": 200,
   "deltaT": 10,
-  "initialTime": 180,
+  "initialTime": 1,
   "deltaW": 1,
   "alpha": 0
 }

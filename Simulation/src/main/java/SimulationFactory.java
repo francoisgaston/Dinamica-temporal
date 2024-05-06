@@ -117,7 +117,7 @@ public class SimulationFactory {
             TierraPrevAccelerationX = TierraXFuction.apply(tierraAux[0], tierraAux[1]);
             TierraPrevAccelerationY = TierraYFuction.apply(tierraAux[0], tierraAux[1]);
 
-            if(!complete && Utils.MARS_RADIUS * 1000 > Math.sqrt(Math.pow(nave[0]-marte[0], 2) + Math.pow(nave[1]-marte[1], 2))){
+            if(!complete && Utils.MARS_RADIUS * 10 > Math.sqrt(Math.pow(nave[0]-marte[0], 2) + Math.pow(nave[1]-marte[1], 2))){
                 bw.write(actualTime +
                         "," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] +
                         "," + marte[0] + "," + marte[1] + "," + marte[2] + "," + marte[3] +
