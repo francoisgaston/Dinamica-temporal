@@ -28,15 +28,15 @@ public class PlanetsMain {
 
         //deltaTimeVariation(earthDistance, martDistance, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, initialTime);
 
-        //velocityVariation(earthDistance, martDistance, dt, totalTime, alpha, dw, initialTime);
+        velocityVariation(earthDistance, martDistance, dt, totalTime, alpha, dw, 178);
 
-        hoursVariation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, 177);
+        //hoursVariation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, 177);
     }
 
     public static void hoursVariation(double[][] tierra, double[][] mars, double dt, double totalTime, double velocity, double alpha, int dw, int initialTime){
         boolean complete = true;
 
-        for(int hora=0 ; hora <= 48 ; hora=hora+4){
+        for(int hora=0 ; hora <= 48 ; hora=hora+1){
             System.out.println(hora);
             String OutputPath = "Simulation/Output/PlanetOutput_" + hora + ".csv";
             double[][] cambiados = SimulationFactory.changeHours(tierra[initialTime], mars[initialTime], hora*60*60, dt);
