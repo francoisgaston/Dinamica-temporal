@@ -22,13 +22,13 @@ public class PlanetsMain {
         double[][] martDistance = new double[(int) 367][4];
         Utils.readCSV("Simulation/Input/mars.csv", martDistance);
 
-        //singleSimulation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, initialTime);
+        singleSimulation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, 178);
 
         //initialVariation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw);
 
         //deltaTimeVariation(earthDistance, martDistance, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, initialTime);
 
-        velocityVariation(earthDistance, martDistance, dt, totalTime, alpha, dw, 178);
+        //velocityVariation(earthDistance, martDistance, dt, totalTime, alpha, dw, 178);
 
         //hoursVariation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, 177);
     }
