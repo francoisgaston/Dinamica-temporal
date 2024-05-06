@@ -11,11 +11,11 @@ public class PlanetsMain {
         Utils.writeStatus(simulationConfig);
 
         //dt y totalTime en días de input y aca lo paso a segundos
-        double dt = simulationConfig.getDeltaT()*24*60*60;
+        double dt = simulationConfig.getDeltaT();
         double totalTime = simulationConfig.getTotalTime()*24*60*60;
         int initialTime = simulationConfig.getInitialTime();
         double alpha = simulationConfig.getAlpha();
-        int dw = (int) (simulationConfig.getDeltaW()/simulationConfig.getDeltaT());
+        int dw = (int) (simulationConfig.getDeltaW()*24*60*60/simulationConfig.getDeltaT());
 
         double[][] earthDistance = new double[(int) 367][4];
         Utils.readCSV("Simulation/Input/earth.csv", earthDistance);
@@ -29,6 +29,22 @@ public class PlanetsMain {
         //deltaTimeVariation(earthDistance, martDistance, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, initialTime);
 
         //velocityVariation(earthDistance, martDistance, dt, totalTime, alpha, dw, initialTime);
+
+        hoursVariation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, initialTime);
+    }
+
+    public static void hoursVariation(double[][] tierra, double[][] mars, double dt, double totalTime, double velocity, double alpha, int dw, int initialTime){
+        boolean complete = true;
+
+        for(int hora=0 ; hora <= 24 ; hora++){
+            String OutputPath = "Simulation/Output/PlanetOutput_" + hora + ".csv";
+            double[][] cambiados = changeHours(tierra[initialTime], mars[initialTime]);
+            oneSimulation(cambiados[0], cambiados[1], dt, totalTime, velocity, alpha, dw, complete, OutputPath);
+        }
+    }
+
+    public static double[][] changeHours(double[] tierra, double[] mars){
+        return new double[][]{tierra, mars};
     }
 
     public static void velocityVariation(double[][] tierra, double[][] mars, double dt, double totalTime, double alpha, int dw, int initialTime){
@@ -44,10 +60,11 @@ public class PlanetsMain {
     public static void deltaTimeVariation(double[][] tierra, double[][] mars, double totalTime, double velocity, double alpha, int dw, int initialTime){
         boolean complete = false;
 
-        for(double dt=1.0 ; dt>0.0001; dt= dt / 10.0){
+        for(double dt=0.1 ; dt<1; dt= dt*10){
             System.out.println(dt);
+            int new_dw = (int) (dw*24*60*60/dt);
             String OutputPath = "Simulation/Output/PlanetOutput_" + dt + ".csv";
-            oneSimulation(tierra[initialTime], mars[initialTime], dt*24*60*60, totalTime, velocity, alpha, dw, complete, OutputPath);
+            oneSimulation(tierra[initialTime], mars[initialTime], dt, totalTime, velocity, alpha, new_dw, complete, OutputPath);
         }
     }
 

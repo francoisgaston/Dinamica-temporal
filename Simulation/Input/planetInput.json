@@ -1,6 +1,6 @@
 {
-  "totalTime": 1000,
-  "deltaT": 0.001,
+  "totalTime": 200,
+  "deltaT": 10,
   "initialTime": 180,
   "deltaW": 1,
   "alpha": 0
