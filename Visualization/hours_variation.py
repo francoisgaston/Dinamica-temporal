@@ -37,7 +37,7 @@ min_distances_df.sort_values(by="Filename", inplace=True)
 # Crea el gráfico de distancias mínimas
 plt.figure(figsize=(10, 6))
 plt.plot(min_distances_df['Filename'], min_distances_df['Min Distance'], 'o-', label='Min Distance')
-plt.xlabel("horas", fontsize=16)
+plt.xlabel("Tiempo (horas)", fontsize=16)
 plt.ylabel("Distancia mínima (m)", fontsize=16)
 plt.grid(False)
 plt.show()
