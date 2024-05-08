@@ -69,6 +69,7 @@ public class SimulationFactory {
         double TierraPrevAccelerationX = TierraXFuction.apply(tierra[0], tierra[1]);
         double TierraPrevAccelerationY = TierraYFuction.apply(tierra[0], tierra[1]);
 
+        double min_distancia = 1 * Math.pow(10,10);
         int counterWrite = 0;
         for (double actualTime = 0; actualTime < totalTime; actualTime += deltaTime, counterWrite++) {
             double[] tierraAux = tierra;
@@ -117,16 +118,21 @@ public class SimulationFactory {
             TierraPrevAccelerationX = TierraXFuction.apply(tierraAux[0], tierraAux[1]);
             TierraPrevAccelerationY = TierraYFuction.apply(tierraAux[0], tierraAux[1]);
 
-            if(!complete && Utils.MARS_RADIUS * 1000 > Math.sqrt(Math.pow(nave[0]-marte[0], 2) + Math.pow(nave[1]-marte[1], 2))){
+            if(min_distancia > Math.sqrt(Math.pow(nave[0]-marte[0], 2) + Math.pow(nave[1]-marte[1], 2))){
+                min_distancia = Math.sqrt(Math.pow(nave[0]-marte[0], 2) + Math.pow(nave[1]-marte[1], 2));
+            }
+            if(!complete && 10*(23500 * Math.pow(10,3)) > Math.sqrt(Math.pow(nave[0]-marte[0], 2) + Math.pow(nave[1]-marte[1], 2))){
                 bw.write(actualTime +
                         "," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] +
                         "," + marte[0] + "," + marte[1] + "," + marte[2] + "," + marte[3] +
                         "," + tierra[0] + "," + tierra[1] + "," + tierra[2] + "," + tierra[3] + "\n");
                 System.out.println("Choco");
+                System.out.println(min_distancia);
                 return;
             }
 
             if(counterWrite == deltaWrite){
+
                 counterWrite = 0;
                 bw.write(actualTime +
                         "," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] +
@@ -134,6 +140,8 @@ public class SimulationFactory {
                         "," + tierra[0] + "," + tierra[1] + "," + tierra[2] + "," + tierra[3] + "\n");
             }
         }
+        System.out.println(min_distancia);
+        return;
     }
 
     public static double[][] changeHours(double[] tierra, double[] marte, double totalTime, double deltaTime){

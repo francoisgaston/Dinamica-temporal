@@ -9,7 +9,7 @@ import cv2
 # ---------------------------------------------------
 # FILES STUFF
 # ---------------------------------------------------
-CONFIG_FILE = '../Simulation/Output/Status.json'
+CONFIG_FILE = '../Simulation/Output/d_vel_opt/Status.json'
 OPENCV_OUTPUT_FILENAME = 'visualization'
 SIMULATION_OUTPUT = '../Simulation/Output/PlanetOutput.csv'
 MP4_FORMAT = 'mp4'

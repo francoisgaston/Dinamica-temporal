@@ -22,7 +22,7 @@ public class PlanetsMain {
         double[][] martDistance = new double[(int) 367][4];
         Utils.readCSV("Simulation/Input/mars.csv", martDistance);
 
-        //singleSimulation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, initialTime);
+        //singleSimulation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, 178);
 
         //initialVariation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw);
 
@@ -36,8 +36,8 @@ public class PlanetsMain {
     public static void hoursVariation(double[][] tierra, double[][] mars, double dt, double totalTime, double velocity, double alpha, int dw, int initialTime){
         boolean complete = true;
 
-        for(int hora=0 ; hora <= 72 ; hora=hora+1){
-            System.out.println(hora);
+        for(int hora=0 ; hora <= 48 ; hora=hora+1){
+            //System.out.println(hora);
             String OutputPath = "Simulation/Output/PlanetOutput_" + hora + ".csv";
             double[][] cambiados = SimulationFactory.changeHours(tierra[177], mars[177], hora*60*60, dt);
             SimulationFactory.oneSimulation(cambiados[0], cambiados[1], dt, totalTime, velocity, alpha, dw, complete, OutputPath);
@@ -47,7 +47,7 @@ public class PlanetsMain {
     public static void velocityVariation(double[][] tierra, double[][] mars, double dt, double totalTime, double alpha, int dw, int initialTime){
         boolean complete = false;
 
-        for(double vel=0 ; vel < Utils.INITIAL_NAVE_V * 2 ; vel+= Utils.INITIAL_NAVE_V/10){
+        for(double vel=0 ; vel < Utils.INITIAL_NAVE_V * 2.0 ; vel+= Utils.INITIAL_NAVE_V/20){
             System.out.println(vel);
             String OutputPath = "Simulation/Output/PlanetOutput_" + vel + ".csv";
             SimulationFactory.oneSimulation(tierra[initialTime], mars[initialTime], dt, totalTime, vel, alpha, dw, complete, OutputPath);
@@ -67,9 +67,9 @@ public class PlanetsMain {
 
     // Esto va a tardar 3hs => mejor hacerlo cuando estudio
     public static void initialVariation(double[][] tierra, double[][] mars, double dt, double totalTime, double velocity, double alpha, int dw) {
-        boolean complete = true;
+        boolean complete = false;
 
-        for(int dias=0 ; dias <= 366*2 ; dias=dias+1){
+        for(int dias=732 ; dias <= 800 ; dias=dias+1){
             System.out.println(dias);
             String OutputPath = "Simulation/Output/PlanetOutput_" + dias + ".csv";
             double[][] cambiados = SimulationFactory.changeHours(tierra[0], mars[0], dias*24*60*60, dt);

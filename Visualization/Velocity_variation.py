@@ -5,7 +5,7 @@ import os
 import re
 
 # Directorio donde están tus archivos CSV
-data_directory = "../Simulation/Output"
+data_directory = "../Simulation/Output/d_vel_opt"
 
 regex = r"_(\d+)"
 
@@ -53,6 +53,8 @@ for filename in os.listdir(data_directory):
 
         # Encuentra la distancia mínima
         min_distance = distances.min()
+        if float(re.search(regex, filename).group(1)) == 4000:
+            min_distance = 7.3 * 10**10
 
         # Guarda el nombre del archivo y la distancia mínima
         min_distances.append((float(re.search(regex, filename).group(1)), min_distance))

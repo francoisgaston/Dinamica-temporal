@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-data = pd.read_csv('../Simulation/Output/d_vel_time/PlanetOutput.csv')
+data = pd.read_csv('../Simulation/Output/c_vel_time/PlanetOutput.csv')
 velocity = ((data['svX']**2 + data['svY']**2)**0.5)
 
 plt.figure(figsize=(10, 6))
