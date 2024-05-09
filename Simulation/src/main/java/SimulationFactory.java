@@ -26,6 +26,28 @@ public class SimulationFactory {
         }
     }
 
+    public static void secondSimulation(double[] tierra, double[] mars, double dt, double totalTime, double velocity, double alpha, int deltaWrite, boolean complete, String OutputPath){
+        try {
+            FileWriter fw = new FileWriter(OutputPath);
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            double[] nave = calculateShipPositionSecond(mars, velocity, alpha);
+
+            bw.write("timeFrame,spX,spY,svX,svY,mpX,mpY,mvX,mvY,epX,epY,evX,evY\n");
+            bw.write("0" +
+                    "," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] +
+                    "," + mars[0] + "," + mars[1] + "," + mars[2] + "," + mars[3] +
+                    "," + tierra[0] + "," + tierra[1] + "," + tierra[2] + "," + tierra[3] + "\n");
+
+            simulatePlanets(nave, mars,  tierra,  dt, totalTime, bw, deltaWrite, complete);
+
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public static void simulatePlanets(double[]nave, double[] marte, double[] tierra, double deltaTime, double totalTime, BufferedWriter bw, int deltaWrite, boolean complete) throws IOException {
         double[] tierraPrev = tierra;
         double[] martePrev = marte;
@@ -121,8 +143,9 @@ public class SimulationFactory {
             if(min_distancia > Math.sqrt(Math.pow(nave[0]-marte[0], 2) + Math.pow(nave[1]-marte[1], 2))){
                 min_distancia = Math.sqrt(Math.pow(nave[0]-marte[0], 2) + Math.pow(nave[1]-marte[1], 2));
             }
-            if(!complete && 10*(23500 * Math.pow(10,3)) > Math.sqrt(Math.pow(nave[0]-marte[0], 2) + Math.pow(nave[1]-marte[1], 2))){
-                bw.write(actualTime +
+            //if(!complete && 10*(23500 * Math.pow(10,3)) > Math.sqrt(Math.pow(nave[0]-marte[0], 2) + Math.pow(nave[1]-marte[1], 2))){
+            if(!complete && 20*(Utils.EARTH_RADIUS + Utils.STATION_DISTANCE) > Math.sqrt(Math.pow(nave[0]-tierra[0], 2) + Math.pow(nave[1]-tierra[1], 2))){
+                    bw.write(actualTime +
                         "," + nave[0] + "," + nave[1] + "," + nave[2] + "," + nave[3] +
                         "," + marte[0] + "," + marte[1] + "," + marte[2] + "," + marte[3] +
                         "," + tierra[0] + "," + tierra[1] + "," + tierra[2] + "," + tierra[3] + "\n");
@@ -217,4 +240,19 @@ public class SimulationFactory {
 
         return new double[]{posX, posY, velX, velY};
     }
+
+    public static double[] calculateShipPositionSecond(double[] marsDistance, double velocity, double alpha){
+        double vMarsTangencial = Math.sqrt(Math.pow(marsDistance[2], 2) + Math.pow(marsDistance[3], 2));
+
+        double dMars = Math.sqrt(Math.pow(marsDistance[0], 2) + Math.pow(marsDistance[1], 2));
+        double posX = (dMars - Utils.MARS_RADIUS) * marsDistance[0] / dMars;
+        double posY = (dMars - Utils.MARS_RADIUS) * marsDistance[1] / dMars;
+
+        double VSalida = 20 * Math.pow(10, 3);
+        double velX =  - vMarsTangencial * marsDistance[1] / dMars - VSalida * marsDistance[0] / dMars;
+        double velY =  vMarsTangencial * marsDistance[0] / dMars - VSalida * marsDistance[1] / dMars;
+
+        return new double[]{posX, posY, velX, velY};
+    }
+
 }

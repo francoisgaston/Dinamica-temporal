@@ -5,7 +5,7 @@ import os
 import re
 
 # Directorio donde están tus archivos CSV
-data_directory = "../Simulation/Output/d_vel_opt"
+data_directory = "../Simulation/Output"
 
 regex = r"_(\d+)"
 
@@ -36,6 +36,7 @@ plt.figure(figsize=(10, 6))
 plt.plot(salida_df['Filename'], salida_df['time'], 'o-', label='Min Distance')
 plt.xlabel("Velocidad (m/s)", fontsize=16)
 plt.ylabel("Tiempo total (s)", fontsize=16)
+plt.ticklabel_format(axis="y", style="sci", useMathText=True)
 plt.grid(False)
 plt.show()
 
@@ -70,5 +71,6 @@ plt.figure(figsize=(10, 6))
 plt.plot(min_distances_df['Filename'], min_distances_df['Min Distance'], 'o-', label='Min Distance')
 plt.xlabel("Velocidad (m/s)", fontsize=16)
 plt.ylabel("Distancia mínima (m)", fontsize=16)
+plt.ticklabel_format(axis="y", style="sci", useMathText=True)
 plt.grid(False)
 plt.show()

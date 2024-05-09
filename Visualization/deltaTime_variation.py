@@ -28,7 +28,7 @@ EARTH_RADIUS = 6378 * 10 ** 3
 # --------------------------------------------
 
 # Directorio donde están tus archivos CSV
-data_directory = "../Simulation/Output"
+data_directory = "../Simulation/Output/a_delta_t"
 
 regex = r"PlanetOutput_(.+)\.csv"
 
@@ -76,7 +76,9 @@ for filename in os.listdir(data_directory):
 
 plt.yscale('log')
 plt.xlabel("Tiempo ( s )", fontsize=16)
-plt.ylabel("%Variación de energía ( J )", fontsize=16)
+plt.ylabel("%Variación de energía", fontsize=16)
+plt.ticklabel_format(axis="x", style="sci", useMathText=True)
+
 plt.grid(False)
 plt.legend(bbox_to_anchor=(0.5, 1.1), loc='upper center', borderaxespad=0, fontsize=12, ncol=5)
 plt.show()
@@ -84,8 +86,10 @@ plt.show()
 plt.figure(figsize=(10, 6))
 #plt.loglog(dt, prom, 'o', label="loglog")
 plt.errorbar(dt, prom, yerr=error, fmt='o', label="errobar")
+plt.ticklabel_format(axis="x", style="sci", useMathText=True)
+
 plt.xscale('log')
 plt.yscale('log')
-plt.xlabel("Δtiempo ( s )", fontsize=16)
-plt.ylabel("%Variación de energía ( J )", fontsize=16)
+plt.xlabel("Delta tiempo ( s )", fontsize=16)
+plt.ylabel("%Variación de energía", fontsize=16)
 plt.show()

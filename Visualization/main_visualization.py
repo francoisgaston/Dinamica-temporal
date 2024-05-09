@@ -11,7 +11,7 @@ import cv2
 # ---------------------------------------------------
 CONFIG_FILE = '../Simulation/Output/d_vel_opt/Status.json'
 OPENCV_OUTPUT_FILENAME = 'visualization'
-SIMULATION_OUTPUT = '../Simulation/Output/PlanetOutput.csv'
+SIMULATION_OUTPUT = '../Simulation/Output/PlanetOutput_240.csv'
 MP4_FORMAT = 'mp4'
 EARTH = 'earth.csv'
 MARS = 'mars.csv'

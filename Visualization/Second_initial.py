@@ -6,7 +6,7 @@ import re
 import matplotlib.ticker as ticker  # Importa el módulo ticker
 
 # Directorio donde están tus archivos CSV
-data_directory = "../Simulation/Output/b_dias"
+data_directory = "../Simulation/Output"
 
 regex = r"_(\d+)"
 
@@ -21,10 +21,10 @@ for filename in os.listdir(data_directory):
         df = pd.read_csv(file_path)
 
         # Calcula la distancia entre (spX, spY) y (mpX, mpY)
-        distances = np.sqrt((df['spX'] - df['mpX'])**2 + (df['spY'] - df['mpY'])**2)
+        distances = np.sqrt((df['spX'] - df['epX'])**2 + (df['spY'] - df['epY'])**2)
 
         # Encuentra la distancia mínima
-        min_distance = distances.min()
+        min_distance = distances.min()/10
 
         # Guarda el nombre del archivo y la distancia mínima
         min_distances.append((int(re.search(regex, filename).group(1)), min_distance))
@@ -37,7 +37,7 @@ min_distances_df.sort_values(by="Filename", inplace=True)
 
 # Crea el gráfico de distancias mínimas
 plt.figure(figsize=(10, 6))
-plt.plot(min_distances_df['Filename'], min_distances_df['Min Distance'], 'o', markersize=1, label='Min Distance')
+plt.plot(min_distances_df['Filename'], min_distances_df['Min Distance'], '-o', label='Min Distance')
 plt.xlabel("Días posteriores", fontsize=16)
 plt.ylabel("Distancia mínima (m)", fontsize=16)
 plt.grid(False)
@@ -45,7 +45,7 @@ plt.grid(False)
 plt.ticklabel_format(axis="y", style="sci", useMathText=True)
 
 x_labels = min_distances_df['Filename'].values
-x_tick_interval = 100
+x_tick_interval = 10
 # Establece el formato de las etiquetas para evitar decimales
 formatter = ticker.FormatStrFormatter('%d')
 plt.gca().xaxis.set_major_formatter(formatter)

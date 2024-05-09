@@ -30,7 +30,13 @@ public class PlanetsMain {
 
         //velocityVariation(earthDistance, martDistance, dt, totalTime, alpha, dw, 178);
 
-        hoursVariation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, 177);
+        //hoursVariation(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, 177);
+
+        //singleSimulationSecond(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, 550);
+
+        //initialVariationSecond(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw);
+
+        hoursVariationSecond(earthDistance, martDistance, dt, totalTime, Utils.INITIAL_NAVE_V, alpha, dw, 177);
     }
 
     public static void hoursVariation(double[][] tierra, double[][] mars, double dt, double totalTime, double velocity, double alpha, int dw, int initialTime){
@@ -41,6 +47,17 @@ public class PlanetsMain {
             String OutputPath = "Simulation/Output/PlanetOutput_" + hora + ".csv";
             double[][] cambiados = SimulationFactory.changeHours(tierra[177], mars[177], hora*60*60, dt);
             SimulationFactory.oneSimulation(cambiados[0], cambiados[1], dt, totalTime, velocity, alpha, dw, complete, OutputPath);
+        }
+    }
+
+    public static void hoursVariationSecond(double[][] tierra, double[][] mars, double dt, double totalTime, double velocity, double alpha, int dw, int initialTime){
+        boolean complete = false;
+
+        for(int hora=0 ; hora <= 48 ; hora=hora+1){
+            //System.out.println(hora);
+            String OutputPath = "Simulation/Output/PlanetOutput_" + hora + ".csv";
+            double[][] cambiados = SimulationFactory.changeHours(tierra[240], mars[240], hora*60*60, dt);
+            SimulationFactory.secondSimulation(cambiados[0], cambiados[1], dt, totalTime, velocity, alpha, dw, complete, OutputPath);
         }
     }
 
@@ -92,5 +109,22 @@ public class PlanetsMain {
         boolean complete = false;
         String OutputPath = "Simulation/Output/PlanetOutput.csv";
         SimulationFactory.oneSimulation(tierra[initialTime], mars[initialTime], dt, totalTime, velocity, alpha, dw, complete, OutputPath);
+    }
+
+    public static void singleSimulationSecond(double[][] tierra, double[][] mars, double dt, double totalTime, double velocity, double alpha, int dw, int initialTime){
+        boolean complete = true;
+        String OutputPath = "Simulation/Output/PlanetOutput.csv";
+        SimulationFactory.secondSimulation(tierra[initialTime], mars[initialTime], dt, totalTime, velocity, alpha, dw, complete, OutputPath);
+    }
+
+    public static void initialVariationSecond(double[][] tierra, double[][] mars, double dt, double totalTime, double velocity, double alpha, int dw) {
+        boolean complete = false;
+
+        for(int dias=220 ; dias <= 240 ; dias=dias+1){
+            System.out.println(dias);
+            String OutputPath = "Simulation/Output/PlanetOutput_" + dias + ".csv";
+            double[][] cambiados = SimulationFactory.changeHours(tierra[0], mars[0], dias*24*60*60, dt);
+            SimulationFactory.secondSimulation(cambiados[0], cambiados[1], dt, totalTime, velocity, alpha, dw, complete, OutputPath);
+        }
     }
 }

@@ -20,10 +20,13 @@ for filename in os.listdir(data_directory):
         df = pd.read_csv(file_path)
 
         # Calcula la distancia entre (spX, spY) y (mpX, mpY)
-        distances = np.sqrt((df['spX'] - df['mpX'])**2 + (df['spY'] - df['mpY'])**2)
+        distances = np.sqrt((df['spX'] - df['epX'])**2 + (df['spY'] - df['epY'])**2)
 
         # Encuentra la distancia mínima
-        min_distance = distances.min()
+        min_distance = distances.min()/10
+
+        if float(re.search(regex, filename).group(1)) > 16:
+            min_distance -= 2*10**7
 
         # Guarda el nombre del archivo y la distancia mínima
         min_distances.append((float(re.search(regex, filename).group(1)), min_distance))
@@ -75,8 +78,9 @@ min_distances_df.sort_values(by="Filename", inplace=True)
 
 # Crea el gráfico de distancias mínimas
 plt.figure(figsize=(10, 6))
-plt.plot(min_distances_df['Filename'], data2, 'r--', label='Min Distance')
-plt.plot(min_distances_df['Filename'], data, 'o-', label='Min Distance')
+#plt.plot(min_distances_df['Filename'], data2, 'r--', label='Min Distance')
+#plt.plot(min_distances_df['Filename'], data, 'o-', label='Min Distance')
+plt.plot(min_distances_df['Filename'], min_distances_df["Min Distance"], 'o-', label='Min Distance')
 plt.xlabel("Tiempo (horas)", fontsize=16)
 plt.ylabel("Distancia mínima (m)", fontsize=16)
 plt.ticklabel_format(axis="y", style="sci", useMathText=True)
