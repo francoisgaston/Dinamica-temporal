@@ -20,20 +20,19 @@ MARS = 'mars.csv'
 # ---------------------------------------------------
 FPS = 5.0
 VIDEO_RES = 2000
-# SCALE_FACTOR = 10**-8
 L = 5 * 10**11
-SUN_COLOR = (0, 255, 255)
-SUN_RADIUS = 69.6500
+SUN_COLOR = (0, 165, 255)
+SUN_RADIUS = 69.6500 * 2
 EARTH_COLOR = (240, 0, 0)
-EARTH_RADIUS = 6.378 * 4
+EARTH_RADIUS = 6.378 * 8
 EARTH_X = 7
 EARTH_Y = 8
 MARS_COLOR = (0, 0, 240)
-MARS_RADIUS = 3.3895 * 4
+MARS_RADIUS = 3.3895 * 8
 MARS_X = 5
 MARS_Y = 6
 ROCKET_COLOR = (0,0,0)
-ROCKET_SIZE = 5
+ROCKET_SIZE = 5 * 2
 ROCKET_X = 1
 ROCKET_Y = 2
 # ---------------------------------------------------
@@ -41,10 +40,7 @@ ROCKET_Y = 2
 
 def complete_visualization_opencv(lines):
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    # SCALED_L = L * SCALE_FACTOR
     video_writer = cv2.VideoWriter(OPENCV_OUTPUT_FILENAME + '.' + MP4_FORMAT, fourcc, FPS, (VIDEO_RES,VIDEO_RES))
-
-
 
     for index, row in lines.iterrows():
         frame = np.full((int(VIDEO_RES),int(VIDEO_RES), 3), 255, dtype=np.uint8)
@@ -63,7 +59,9 @@ def complete_visualization_opencv(lines):
 
         # Rocket
         rocket_pos = [int((row['spX']* VIDEO_RES / L) + VIDEO_RES/2), int( (-row['spY']* VIDEO_RES / L ) + VIDEO_RES/2)]
+        end_point = [int(((row['spX'] + row['svX'])* VIDEO_RES / L) + VIDEO_RES/2), int( ((-row['spY']-row['svY'])* VIDEO_RES / L ) + VIDEO_RES/2)]
         cv2.circle(frame, tuple(rocket_pos), int(ROCKET_SIZE), ROCKET_COLOR, -1)
+        #cv2.arrowedLine(frame, tuple(rocket_pos), tuple(end_point), ROCKET_COLOR, ROCKET_SIZE * 5)
 
         video_writer.write(frame)
 
