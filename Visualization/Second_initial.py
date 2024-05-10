@@ -6,7 +6,7 @@ import re
 import matplotlib.ticker as ticker  # Importa el módulo ticker
 
 # Directorio donde están tus archivos CSV
-data_directory = "../Simulation/Output"
+data_directory = "../Simulation/Output/hours"
 
 regex = r"_(\d+)"
 
@@ -24,7 +24,7 @@ for filename in os.listdir(data_directory):
         distances = np.sqrt((df['spX'] - df['epX'])**2 + (df['spY'] - df['epY'])**2)
 
         # Encuentra la distancia mínima
-        min_distance = distances.min()/10
+        min_distance = distances.min()
 
         # Guarda el nombre del archivo y la distancia mínima
         min_distances.append((int(re.search(regex, filename).group(1)), min_distance))
